@@ -23,28 +23,4 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 );
 Card.displayName = "Card";
 
-interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
-  padding?: "sm" | "md" | "lg";
-}
-
-const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
-  ({ className, padding = "md", ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          {
-            "p-4": padding === "sm",
-            "p-4 sm:p-6": padding === "md",
-            "p-6 sm:p-8": padding === "lg",
-          },
-          className
-        )}
-        {...props}
-      />
-    );
-  }
-);
-CardContent.displayName = "CardContent";
-
-export { Card, CardContent };
+export { Card };
