@@ -15,12 +15,6 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-/**
- * Error Boundary コンポーネント
- *
- * 子コンポーネントでエラーが発生した場合にフォールバックUIを表示
- * グローバルなエラーハンドリングを提供
- */
 export class ErrorBoundary extends Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
@@ -35,10 +29,7 @@ export class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-    // エラーログを送信（Sentry等に統合可能）
     console.error("ErrorBoundary caught an error:", error, errorInfo);
-
-    // カスタムエラーハンドラーを呼び出し
     this.props.onError?.(error, errorInfo);
   }
 
@@ -80,18 +71,21 @@ export class ErrorBoundary extends Component<
   }
 }
 
-/**
- * 関数コンポーネント用のエラーバウンダリラッパー
- */
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
   fallback?: ReactNode
 ): React.FC<P> {
-  return function WithErrorBoundary(props: P) {
+  const displayName = Component.displayName || Component.name || "Component";
+
+  const WithErrorBoundary: React.FC<P> = (props: P) => {
     return (
       <ErrorBoundary fallback={fallback}>
         <Component {...props} />
       </ErrorBoundary>
     );
   };
+
+  WithErrorBoundary.displayName = `withErrorBoundary(${displayName})`;
+
+  return WithErrorBoundary;
 }
