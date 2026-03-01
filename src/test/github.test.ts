@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { searchRepositories, getRepository, GitHubApiError } from "@/lib/github";
+import { searchRepositories, getRepository } from "@/lib/api/github-client";
 import { mockRepository, mockSearchResponse } from "./fixtures";
 
 const mockFetch = vi.fn();
@@ -19,24 +19,30 @@ describe("searchRepositories", () => {
     const result = await searchRepositories({ query: "" });
 
     expect(mockFetch).not.toHaveBeenCalled();
-    expect(result).toEqual({
-      repositories: [],
-      totalCount: 0,
-      currentPage: 1,
-      totalPages: 0,
-    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toEqual({
+        repositories: [],
+        totalCount: 0,
+        currentPage: 1,
+        totalPages: 0,
+      });
+    }
   });
 
   it("空白のみのクエリの場合もfetchを呼び出さない", async () => {
     const result = await searchRepositories({ query: "   " });
 
     expect(mockFetch).not.toHaveBeenCalled();
-    expect(result).toEqual({
-      repositories: [],
-      totalCount: 0,
-      currentPage: 1,
-      totalPages: 0,
-    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toEqual({
+        repositories: [],
+        totalCount: 0,
+        currentPage: 1,
+        totalPages: 0,
+      });
+    }
   });
 
   it("正常なレスポンスを正しく変換する", async () => {
@@ -47,9 +53,12 @@ describe("searchRepositories", () => {
 
     const result = await searchRepositories({ query: "react" });
 
-    expect(result.repositories).toEqual(mockSearchResponse.items);
-    expect(result.totalCount).toBe(2);
-    expect(result.currentPage).toBe(1);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.repositories).toEqual(mockSearchResponse.items);
+      expect(result.data.totalCount).toBe(2);
+      expect(result.data.currentPage).toBe(1);
+    }
   });
 
   it("pageパラメータが正しく送信される", async () => {
@@ -60,7 +69,9 @@ describe("searchRepositories", () => {
 
     await searchRepositories({ query: "react", page: 3 });
 
-    const url = new URL(mockFetch.mock.calls[0][0]);
+    const call = mockFetch.mock.calls[0];
+    expect(call).toBeDefined();
+    const url = new URL(call![0] as string);
     expect(url.searchParams.get("page")).toBe("3");
   });
 
@@ -72,7 +83,9 @@ describe("searchRepositories", () => {
 
     await searchRepositories({ query: "react", sort: "stars" });
 
-    const url = new URL(mockFetch.mock.calls[0][0]);
+    const call = mockFetch.mock.calls[0];
+    expect(call).toBeDefined();
+    const url = new URL(call![0] as string);
     expect(url.searchParams.get("sort")).toBe("stars");
   });
 
@@ -84,33 +97,45 @@ describe("searchRepositories", () => {
 
     await searchRepositories({ query: "react", sort: "best-match" });
 
-    const url = new URL(mockFetch.mock.calls[0][0]);
+    const call = mockFetch.mock.calls[0];
+    expect(call).toBeDefined();
+    const url = new URL(call![0] as string);
     expect(url.searchParams.has("sort")).toBe(false);
     expect(url.searchParams.has("order")).toBe(false);
   });
 
-  it("403エラーの場合はレート制限エラーメッセージを返す", async () => {
+  it("403エラーの場合はレート制限エラーを返す", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 403,
       json: () => Promise.resolve({}),
     });
 
-    await expect(searchRepositories({ query: "react" })).rejects.toThrow(
-      "APIレート制限に達しました。しばらく待ってから再試行してください。"
-    );
+    const result = await searchRepositories({ query: "react" });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe("RATE_LIMIT");
+      expect(result.error.message).toBe(
+        "APIレート制限に達しました。しばらく待ってから再試行してください。"
+      );
+    }
   });
 
-  it("422エラーの場合は無効なクエリエラーメッセージを返す", async () => {
+  it("422エラーの場合は無効なクエリエラーを返す", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 422,
       json: () => Promise.resolve({}),
     });
 
-    await expect(searchRepositories({ query: "invalid::query" })).rejects.toThrow(
-      "検索クエリが無効です。"
-    );
+    const result = await searchRepositories({ query: "invalid::query" });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe("INVALID_QUERY");
+      expect(result.error.message).toBe("検索クエリが無効です。");
+    }
   });
 
   it("GITHUB_TOKENが設定されている場合はAuthorizationヘッダーに含まれる", async () => {
@@ -122,8 +147,25 @@ describe("searchRepositories", () => {
 
     await searchRepositories({ query: "react" });
 
-    const headers = mockFetch.mock.calls[0][1].headers;
-    expect(headers.Authorization).toBe("Bearer test-token");
+    const call = mockFetch.mock.calls[0];
+    expect(call).toBeDefined();
+    const options = call![1] as { headers: Record<string, string> };
+    expect(options.headers.Authorization).toBe("Bearer test-token");
+  });
+
+  it("ネットワークエラーの場合はNETWORK_ERRORを返す", async () => {
+    mockFetch.mockRejectedValueOnce(new Error("Network error"));
+
+    const result = await searchRepositories({ query: "react" });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe("NETWORK_ERROR");
+      expect(result.error.message).toBe(
+        "ネットワークエラーが発生しました。インターネット接続を確認してください。"
+      );
+      expect(result.error.status).toBe(0);
+    }
   });
 });
 
@@ -145,7 +187,10 @@ describe("getRepository", () => {
 
     const result = await getRepository("facebook", "react");
 
-    expect(result).toEqual(mockRepository);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toEqual(mockRepository);
+    }
   });
 
   it("正しいエンドポイントURLを使用する", async () => {
@@ -162,20 +207,35 @@ describe("getRepository", () => {
     );
   });
 
-  it("404エラーの場合はリポジトリが見つからないエラーを返す", async () => {
+  it("404エラーの場合はNOT_FOUNDエラーを返す", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 404,
       json: () => Promise.resolve({}),
     });
 
-    try {
-      await getRepository("unknown", "repo");
-      expect.fail("Should have thrown an error");
-    } catch (error) {
-      expect(error).toBeInstanceOf(GitHubApiError);
-      expect((error as GitHubApiError).message).toBe("リポジトリが見つかりませんでした。");
-      expect((error as GitHubApiError).status).toBe(404);
+    const result = await getRepository("unknown", "repo");
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe("NOT_FOUND");
+      expect(result.error.message).toBe("リポジトリが見つかりませんでした。");
+      expect(result.error.status).toBe(404);
+    }
+  });
+
+  it("ネットワークエラーの場合はNETWORK_ERRORを返す", async () => {
+    mockFetch.mockRejectedValueOnce(new Error("Network error"));
+
+    const result = await getRepository("facebook", "react");
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe("NETWORK_ERROR");
+      expect(result.error.message).toBe(
+        "ネットワークエラーが発生しました。インターネット接続を確認してください。"
+      );
+      expect(result.error.status).toBe(0);
     }
   });
 });

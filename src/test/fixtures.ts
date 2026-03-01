@@ -1,4 +1,4 @@
-import type { GitHubOwner, GitHubRepository, GitHubSearchResponse } from "@/types/github";
+import type { GitHubOwner, GitHubRepository, GitHubSearchResponse } from "@/lib/schemas/github";
 
 export const mockOwner: GitHubOwner = {
   login: "facebook",

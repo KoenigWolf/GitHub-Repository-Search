@@ -1,7 +1,8 @@
 import { RepositoryCard } from "@/components/RepositoryCard";
 import { Pagination } from "@/components/Pagination";
-import type { GitHubRepository } from "@/types/github";
+import type { GitHubRepository } from "@/lib/schemas/github";
 import { formatNumber } from "@/lib/utils";
+import { GITHUB_API } from "@/lib/constants";
 
 interface RepositoryListProps {
   repositories: GitHubRepository[];
@@ -22,9 +23,9 @@ export function RepositoryList({
     <div className="space-y-6">
       <div className="text-sm text-muted-foreground">
         &ldquo;{query}&rdquo; の検索結果: {formatNumber(totalCount)} 件
-        {totalCount > 1000 && (
+        {totalCount > GITHUB_API.MAX_SEARCH_RESULTS && (
           <span className="ml-2 text-xs">
-            (GitHub APIの制限により最大1,000件まで表示)
+            (GitHub APIの制限により最大{GITHUB_API.MAX_SEARCH_RESULTS.toLocaleString()}件まで表示)
           </span>
         )}
       </div>

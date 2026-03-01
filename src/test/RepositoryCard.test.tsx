@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { RepositoryCard } from "@/components/RepositoryCard";
 import { mockRepository } from "./fixtures";
-import type { GitHubRepository } from "@/types/github";
+import type { GitHubRepository } from "@/lib/schemas/github";
 
 vi.mock("next/image", () => ({
   default: ({ src, alt }: { src: string; alt: string }) => (
