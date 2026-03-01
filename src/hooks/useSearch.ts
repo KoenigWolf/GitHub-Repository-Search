@@ -4,27 +4,24 @@ import { useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { SearchParams } from "@/lib/schemas/github";
 
-/**
- * 検索パラメータを管理するカスタムフック
- *
- * URL検索パラメータと同期し、型安全な検索機能を提供
- */
-export function useSearchParams_() {
+function normalizePageNumber(value: number | string): number {
+  const num = typeof value === "string" ? parseInt(value, 10) : value;
+  if (Number.isNaN(num) || num < 1) {
+    return 1;
+  }
+  return Math.floor(num);
+}
+
+export function useSearchQueryParams() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  /**
-   * 現在の検索パラメータ
-   */
   const params = useMemo((): Partial<SearchParams> => ({
     query: searchParams.get("q") ?? "",
     sort: (searchParams.get("sort") as SearchParams["sort"]) ?? "best-match",
-    page: parseInt(searchParams.get("page") ?? "1", 10),
+    page: normalizePageNumber(searchParams.get("page") ?? "1"),
   }), [searchParams]);
 
-  /**
-   * 検索を実行
-   */
   const search = useCallback(
     (query: string, sort: SearchParams["sort"] = "best-match") => {
       const trimmedQuery = query.trim();
@@ -40,21 +37,16 @@ export function useSearchParams_() {
     [router]
   );
 
-  /**
-   * ページを変更
-   */
   const setPage = useCallback(
     (page: number) => {
+      const validPage = normalizePageNumber(page);
       const newParams = new URLSearchParams(searchParams.toString());
-      newParams.set("page", String(page));
+      newParams.set("page", String(validPage));
       router.push(`/search?${newParams.toString()}`);
     },
     [router, searchParams]
   );
 
-  /**
-   * ソートを変更
-   */
   const setSort = useCallback(
     (sort: SearchParams["sort"]) => {
       const newParams = new URLSearchParams(searchParams.toString());
@@ -65,27 +57,15 @@ export function useSearchParams_() {
     [router, searchParams]
   );
 
-  /**
-   * 検索をクリア
-   */
   const clear = useCallback(() => {
     router.push("/search");
   }, [router]);
 
-  return {
-    params,
-    search,
-    setPage,
-    setSort,
-    clear,
-  };
+  return { params, search, setPage, setSort, clear };
 }
 
-/**
- * ページネーション状態を管理するカスタムフック
- */
 export function usePagination(currentPage: number, totalPages: number) {
-  const { setPage } = useSearchParams_();
+  const { setPage } = useSearchQueryParams();
 
   const canGoPrevious = currentPage > 1;
   const canGoNext = currentPage < totalPages;
@@ -111,9 +91,6 @@ export function usePagination(currentPage: number, totalPages: number) {
     }
   }, [canGoNext, currentPage, setPage]);
 
-  /**
-   * ページ番号の配列を生成（省略記号付き）
-   */
   const pageNumbers = useMemo((): (number | "ellipsis")[] => {
     if (totalPages <= 1) return [];
 

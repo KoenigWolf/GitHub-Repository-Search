@@ -7,6 +7,25 @@ import { SearchResultsSkeleton } from "@/components/Skeleton";
 import { ErrorDisplay } from "@/components/ErrorDisplay";
 import { searchRepositories } from "@/lib/api/github-client";
 import type { SearchParams } from "@/lib/schemas/github";
+import { GITHUB_API } from "@/lib/constants";
+
+/**
+ * クエリ文字列を正規化（トリム + 連続空白を単一スペースに）
+ */
+function normalizeQuery(query: string): string {
+  return query.trim().replace(/\s+/g, " ");
+}
+
+/**
+ * ページ番号を正規化（NaNや無効な値を1にクランプ）
+ */
+function normalizePageNumber(pageStr: string): number {
+  const parsed = parseInt(pageStr, 10);
+  if (Number.isNaN(parsed) || parsed < 1) {
+    return 1;
+  }
+  return parsed;
+}
 
 interface SearchPageProps {
   searchParams: Promise<{ q?: string; sort?: string; page?: string }>;
@@ -42,7 +61,7 @@ async function SearchResults({
     query,
     sort,
     page,
-    per_page: 30,
+    per_page: GITHUB_API.DEFAULT_PER_PAGE,
   });
 
   // Result型パターン: 成功/失敗を型で判別
@@ -73,9 +92,9 @@ async function SearchResults({
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
-  const query = params.q ?? "";
+  const query = normalizeQuery(params.q ?? "");
   const sort = (params.sort ?? "best-match") as SearchParams["sort"];
-  const page = parseInt(params.page ?? "1", 10);
+  const page = normalizePageNumber(params.page ?? "1");
 
   return (
     <div className="space-y-8">

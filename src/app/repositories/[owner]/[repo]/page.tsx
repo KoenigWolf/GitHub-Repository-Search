@@ -16,7 +16,6 @@ import {
   Lock,
   Globe,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ErrorDisplay } from "@/components/ErrorDisplay";
 import { getRepository } from "@/lib/api/github-client";
@@ -109,11 +108,12 @@ async function RepositoryDetail({
 
   return (
     <div className="space-y-6">
-      <Link href="/search">
-        <Button variant="ghost" className="gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          検索に戻る
-        </Button>
+      <Link
+        href="/search"
+        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 gap-2"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        検索に戻る
       </Link>
 
       <div className="rounded-lg border border-border bg-card p-6">
@@ -166,11 +166,10 @@ async function RepositoryDetail({
                 href={repository.html_url}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 gap-2"
               >
-                <Button variant="outline" className="gap-2">
-                  <ExternalLink className="h-4 w-4" />
-                  GitHubで開く
-                </Button>
+                <ExternalLink className="h-4 w-4" />
+                GitHubで開く
               </a>
             </div>
           </div>
