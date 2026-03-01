@@ -5,7 +5,8 @@ import { SearchForm } from "@/components/SearchForm";
 import { RepositoryList } from "@/components/RepositoryList";
 import { SearchResultsSkeleton } from "@/components/Skeleton";
 import { ErrorDisplay } from "@/components/ErrorDisplay";
-import { searchRepositories, GitHubApiError } from "@/lib/github";
+import { searchRepositories } from "@/lib/api/github-client";
+import type { SearchParams } from "@/lib/schemas/github";
 
 interface SearchPageProps {
   searchParams: Promise<{ q?: string; sort?: string; page?: string }>;
@@ -34,46 +35,46 @@ async function SearchResults({
   page,
 }: {
   query: string;
-  sort: string;
+  sort: SearchParams["sort"];
   page: number;
 }) {
-  try {
-    const result = await searchRepositories({
-      query,
-      sort: sort as "stars" | "forks" | "updated" | "best-match",
-      page,
-      per_page: 30,
-    });
+  const result = await searchRepositories({
+    query,
+    sort,
+    page,
+    per_page: 30,
+  });
 
-    if (result.repositories.length === 0) {
-      return (
-        <div className="text-center text-muted-foreground">
-          <p>&ldquo;{query}&rdquo; に一致するリポジトリが見つかりませんでした。</p>
-        </div>
-      );
-    }
-
-    return (
-      <RepositoryList
-        repositories={result.repositories}
-        totalCount={result.totalCount}
-        currentPage={result.currentPage}
-        totalPages={result.totalPages}
-        query={query}
-      />
-    );
-  } catch (error) {
-    if (error instanceof GitHubApiError) {
-      return <ErrorDisplay message={error.message} />;
-    }
-    return <ErrorDisplay message="リポジトリの検索中にエラーが発生しました。" />;
+  // Result型パターン: 成功/失敗を型で判別
+  if (!result.success) {
+    return <ErrorDisplay message={result.error.message} />;
   }
+
+  const { data } = result;
+
+  if (data.repositories.length === 0) {
+    return (
+      <div className="text-center text-muted-foreground">
+        <p>&ldquo;{query}&rdquo; に一致するリポジトリが見つかりませんでした。</p>
+      </div>
+    );
+  }
+
+  return (
+    <RepositoryList
+      repositories={data.repositories}
+      totalCount={data.totalCount}
+      currentPage={data.currentPage}
+      totalPages={data.totalPages}
+      query={query}
+    />
+  );
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
   const query = params.q ?? "";
-  const sort = params.sort ?? "best-match";
+  const sort = (params.sort ?? "best-match") as SearchParams["sort"];
   const page = parseInt(params.page ?? "1", 10);
 
   return (

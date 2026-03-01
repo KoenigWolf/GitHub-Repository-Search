@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star, GitFork, AlertCircle, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import type { GitHubRepository } from "@/types/github";
+import type { GitHubRepository } from "@/lib/schemas/github";
 import { formatNumber, formatDate } from "@/lib/utils";
 import { LANGUAGE_COLORS, DEFAULT_LANGUAGE_COLOR } from "@/lib/constants";
 

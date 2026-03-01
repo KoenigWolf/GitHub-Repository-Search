@@ -60,7 +60,9 @@ describe("searchRepositories", () => {
 
     await searchRepositories({ query: "react", page: 3 });
 
-    const url = new URL(mockFetch.mock.calls[0][0]);
+    const call = mockFetch.mock.calls[0];
+    expect(call).toBeDefined();
+    const url = new URL(call![0] as string);
     expect(url.searchParams.get("page")).toBe("3");
   });
 
@@ -72,7 +74,9 @@ describe("searchRepositories", () => {
 
     await searchRepositories({ query: "react", sort: "stars" });
 
-    const url = new URL(mockFetch.mock.calls[0][0]);
+    const call = mockFetch.mock.calls[0];
+    expect(call).toBeDefined();
+    const url = new URL(call![0] as string);
     expect(url.searchParams.get("sort")).toBe("stars");
   });
 
@@ -84,7 +88,9 @@ describe("searchRepositories", () => {
 
     await searchRepositories({ query: "react", sort: "best-match" });
 
-    const url = new URL(mockFetch.mock.calls[0][0]);
+    const call = mockFetch.mock.calls[0];
+    expect(call).toBeDefined();
+    const url = new URL(call![0] as string);
     expect(url.searchParams.has("sort")).toBe(false);
     expect(url.searchParams.has("order")).toBe(false);
   });
@@ -122,8 +128,10 @@ describe("searchRepositories", () => {
 
     await searchRepositories({ query: "react" });
 
-    const headers = mockFetch.mock.calls[0][1].headers;
-    expect(headers.Authorization).toBe("Bearer test-token");
+    const call = mockFetch.mock.calls[0];
+    expect(call).toBeDefined();
+    const options = call![1] as { headers: Record<string, string> };
+    expect(options.headers.Authorization).toBe("Bearer test-token");
   });
 
   it("ネットワークエラーの場合は適切なエラーメッセージを返す", async () => {
