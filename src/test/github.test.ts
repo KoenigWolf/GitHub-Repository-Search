@@ -125,6 +125,21 @@ describe("searchRepositories", () => {
     const headers = mockFetch.mock.calls[0][1].headers;
     expect(headers.Authorization).toBe("Bearer test-token");
   });
+
+  it("ネットワークエラーの場合は適切なエラーメッセージを返す", async () => {
+    mockFetch.mockRejectedValueOnce(new Error("Network error"));
+
+    try {
+      await searchRepositories({ query: "react" });
+      expect.fail("Should have thrown an error");
+    } catch (error) {
+      expect(error).toBeInstanceOf(GitHubApiError);
+      expect((error as GitHubApiError).message).toBe(
+        "ネットワークエラーが発生しました。インターネット接続を確認してください。"
+      );
+      expect((error as GitHubApiError).status).toBe(0);
+    }
+  });
 });
 
 describe("getRepository", () => {
@@ -176,6 +191,21 @@ describe("getRepository", () => {
       expect(error).toBeInstanceOf(GitHubApiError);
       expect((error as GitHubApiError).message).toBe("リポジトリが見つかりませんでした。");
       expect((error as GitHubApiError).status).toBe(404);
+    }
+  });
+
+  it("ネットワークエラーの場合は適切なエラーメッセージを返す", async () => {
+    mockFetch.mockRejectedValueOnce(new Error("Network error"));
+
+    try {
+      await getRepository("facebook", "react");
+      expect.fail("Should have thrown an error");
+    } catch (error) {
+      expect(error).toBeInstanceOf(GitHubApiError);
+      expect((error as GitHubApiError).message).toBe(
+        "ネットワークエラーが発生しました。インターネット接続を確認してください。"
+      );
+      expect((error as GitHubApiError).status).toBe(0);
     }
   });
 });
