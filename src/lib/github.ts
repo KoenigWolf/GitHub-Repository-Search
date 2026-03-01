@@ -15,6 +15,13 @@ export class GitHubApiError extends Error {
   }
 }
 
+function createNetworkError(): GitHubApiError {
+  return new GitHubApiError(
+    "ネットワークエラーが発生しました。インターネット接続を確認してください。",
+    0
+  );
+}
+
 // 環境変数の検証（起動時に警告）
 if (typeof window === "undefined") {
   if (process.env.NODE_ENV === "production" && !process.env.GITHUB_TOKEN) {
@@ -68,10 +75,7 @@ export async function searchRepositories(
       next: { revalidate: 60 },
     });
   } catch {
-    throw new GitHubApiError(
-      "ネットワークエラーが発生しました。インターネット接続を確認してください。",
-      0
-    );
+    throw createNetworkError();
   }
 
   if (!response.ok) {
@@ -120,10 +124,7 @@ export async function getRepository(
       next: { revalidate: 300 },
     });
   } catch {
-    throw new GitHubApiError(
-      "ネットワークエラーが発生しました。インターネット接続を確認してください。",
-      0
-    );
+    throw createNetworkError();
   }
 
   if (!response.ok) {
