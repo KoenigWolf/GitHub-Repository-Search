@@ -5,30 +5,14 @@ import { SearchForm } from "@/components/SearchForm";
 import { RepositoryList } from "@/components/RepositoryList";
 import { SearchResultsSkeleton } from "@/components/Skeleton";
 import { ErrorDisplay } from "@/components/ErrorDisplay";
+import { EmptyState } from "@/components/EmptyState";
 import { searchRepositories } from "@/lib/api/github-client";
-import type { SearchParams } from "@/lib/schemas/github";
-import { GITHUB_API } from "@/lib/constants";
-
-function normalizeQuery(query: string): string {
-  return query.trim().replace(/\s+/g, " ");
-}
-
-function normalizePageNumber(pageStr: string): number {
-  const parsed = parseInt(pageStr, 10);
-  if (Number.isNaN(parsed) || parsed < 1) {
-    return 1;
-  }
-  return parsed;
-}
-
-const VALID_SORT_VALUES = ["stars", "forks", "updated", "best-match"] as const;
-
-function normalizeSortParam(value: string | undefined): SearchParams["sort"] {
-  if (value && VALID_SORT_VALUES.includes(value as SearchParams["sort"])) {
-    return value as SearchParams["sort"];
-  }
-  return "best-match";
-}
+import { APP_NAME, GITHUB_API, type SortValue } from "@/lib/constants";
+import {
+  normalizeQuery,
+  normalizePageNumber,
+  normalizeSortParam,
+} from "@/lib/validators";
 
 interface SearchPageProps {
   searchParams: Promise<{ q?: string; sort?: string; page?: string }>;
@@ -38,16 +22,16 @@ export async function generateMetadata({
   searchParams,
 }: SearchPageProps): Promise<Metadata> {
   const params = await searchParams;
-  const query = params.q;
+  const query = normalizeQuery(params.q ?? "");
 
   if (query) {
     return {
-      title: `"${query}" の検索結果 - GitHub Repository Search`,
+      title: `"${query}" の検索結果 - ${APP_NAME}`,
     };
   }
 
   return {
-    title: "GitHub Repository Search",
+    title: APP_NAME,
   };
 }
 
@@ -57,7 +41,7 @@ async function SearchResults({
   page,
 }: {
   query: string;
-  sort: SearchParams["sort"];
+  sort: SortValue;
   page: number;
 }) {
   const result = await searchRepositories({
@@ -105,15 +89,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       </Suspense>
 
       {!query ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <Github className="h-16 w-16 text-muted-foreground" />
-          <h2 className="mt-4 text-xl font-semibold">
-            GitHubリポジトリを検索
-          </h2>
-          <p className="mt-2 text-muted-foreground">
-            キーワードを入力して、リポジトリを検索してみましょう
-          </p>
-        </div>
+        <EmptyState
+          icon={Github}
+          title="GitHubリポジトリを検索"
+          description="キーワードを入力して、リポジトリを検索してみましょう"
+        />
       ) : (
         <Suspense fallback={<SearchResultsSkeleton />}>
           <SearchResults query={query} sort={sort} page={page} />

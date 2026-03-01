@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { SORT_VALUES } from "@/lib/constants";
 
 export const GitHubOwnerSchema = z.object({
   login: z.string(),
@@ -30,25 +31,18 @@ export const GitHubSearchResponseSchema = z.object({
   items: z.array(GitHubRepositorySchema),
 });
 
-export const GitHubErrorResponseSchema = z.object({
-  message: z.string(),
-  documentation_url: z.string().optional(),
-});
-
 export type GitHubOwner = z.infer<typeof GitHubOwnerSchema>;
 export type GitHubRepository = z.infer<typeof GitHubRepositorySchema>;
 export type GitHubSearchResponse = z.infer<typeof GitHubSearchResponseSchema>;
-export type GitHubErrorResponse = z.infer<typeof GitHubErrorResponseSchema>;
 
 export const SearchParamsSchema = z.object({
   query: z.string().min(1, "検索クエリは必須です"),
-  sort: z.enum(["stars", "forks", "updated", "best-match"]).default("best-match"),
+  sort: z.enum(SORT_VALUES).default("best-match"),
   order: z.enum(["asc", "desc"]).default("desc"),
   page: z.number().int().positive().default(1),
   per_page: z.number().int().min(1).max(100).default(30),
 });
 
-export type SearchParams = z.infer<typeof SearchParamsSchema>;
 export type SearchParamsInput = z.input<typeof SearchParamsSchema>;
 
 export const SearchResultSchema = z.object({

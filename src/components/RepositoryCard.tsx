@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Star, GitFork, AlertCircle, Calendar } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { IconText } from "@/components/ui/icon-text";
+import { RepositoryTopics } from "@/components/RepositoryTopics";
 import type { GitHubRepository } from "@/lib/schemas/github";
 import { formatNumber, formatDate } from "@/lib/utils";
 import { LANGUAGE_COLORS, DEFAULT_LANGUAGE_COLOR } from "@/lib/constants";
@@ -23,14 +25,8 @@ export function RepositoryCard({ repository }: RepositoryCardProps) {
     topics,
   } = repository;
 
-  const displayTopics = topics.slice(0, 5);
-  const remainingTopics = topics.length - 5;
-
   return (
-    <article
-      className="rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-md"
-      aria-label={`${full_name} リポジトリ`}
-    >
+    <Card as="article" hover className="p-4" aria-label={`${full_name} リポジトリ`}>
       <div className="flex items-start gap-3">
         <Image
           src={owner.avatar_url}
@@ -67,47 +63,36 @@ export function RepositoryCard({ repository }: RepositoryCardProps) {
               </span>
             )}
 
-            <span className="flex items-center gap-1" title="スター数">
-              <Star className="h-4 w-4" aria-hidden="true" />
+            <IconText icon={Star} title="スター数">
               <span aria-label={`${stargazers_count} スター`}>
                 {formatNumber(stargazers_count)}
               </span>
-            </span>
+            </IconText>
 
-            <span className="flex items-center gap-1" title="フォーク数">
-              <GitFork className="h-4 w-4" aria-hidden="true" />
+            <IconText icon={GitFork} title="フォーク数">
               <span aria-label={`${forks_count} フォーク`}>
                 {formatNumber(forks_count)}
               </span>
-            </span>
+            </IconText>
 
-            <span className="flex items-center gap-1" title="Issue数">
-              <AlertCircle className="h-4 w-4" aria-hidden="true" />
+            <IconText icon={AlertCircle} title="Issue数">
               <span aria-label={`${open_issues_count} イシュー`}>
                 {formatNumber(open_issues_count)}
               </span>
-            </span>
+            </IconText>
 
-            <span className="flex items-center gap-1" title="更新日">
-              <Calendar className="h-4 w-4" aria-hidden="true" />
+            <IconText icon={Calendar} title="更新日">
               <time dateTime={updated_at}>{formatDate(updated_at)}</time>
-            </span>
+            </IconText>
           </div>
 
-          {displayTopics.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-1">
-              {displayTopics.map((topic) => (
-                <Badge key={topic} variant="secondary">
-                  {topic}
-                </Badge>
-              ))}
-              {remainingTopics > 0 && (
-                <Badge variant="outline">+{remainingTopics}</Badge>
-              )}
+          {topics.length > 0 && (
+            <div className="mt-3">
+              <RepositoryTopics topics={topics} />
             </div>
           )}
         </div>
       </div>
-    </article>
+    </Card>
   );
 }

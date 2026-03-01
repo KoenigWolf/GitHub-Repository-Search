@@ -1,4 +1,6 @@
 import { cn } from "@/lib/utils";
+import { UI } from "@/lib/constants";
+import { Card } from "@/components/ui/card";
 
 interface SkeletonProps {
   className?: string;
@@ -15,7 +17,7 @@ function Skeleton({ className }: SkeletonProps) {
 
 export function RepositoryCardSkeleton() {
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
+    <Card className="p-4">
       <div className="flex items-start gap-3">
         <Skeleton className="h-10 w-10 rounded-full" />
         <div className="min-w-0 flex-1 space-y-3">
@@ -35,7 +37,7 @@ export function RepositoryCardSkeleton() {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -44,8 +46,31 @@ export function SearchResultsSkeleton() {
     <div className="space-y-6" aria-busy="true" aria-label="読み込み中">
       <Skeleton className="h-5 w-48" />
       <div className="space-y-4">
-        {Array.from({ length: 5 }).map((_, i) => (
+        {Array.from({ length: UI.SKELETON_ITEM_COUNT }).map((_, i) => (
           <RepositoryCardSkeleton key={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function RepositoryDetailSkeleton() {
+  return (
+    <div className="space-y-6" aria-busy="true" aria-label="読み込み中">
+      <Skeleton className="h-8 w-32" />
+      <Card className="p-6">
+        <div className="flex items-start gap-4">
+          <Skeleton className="h-16 w-16 rounded-full" />
+          <div className="flex-1 space-y-3">
+            <Skeleton className="h-7 w-64" />
+            <Skeleton className="h-5 w-full" />
+            <Skeleton className="h-5 w-3/4" />
+          </div>
+        </div>
+      </Card>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: UI.SKELETON_STAT_CARD_COUNT }).map((_, i) => (
+          <Skeleton key={i} className="h-24 rounded-lg" />
         ))}
       </div>
     </div>

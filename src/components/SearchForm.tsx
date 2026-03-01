@@ -6,6 +6,7 @@ import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { SORT_OPTIONS } from "@/lib/constants";
 
 export function SearchForm() {
   const router = useRouter();
@@ -68,10 +69,11 @@ export function SearchForm() {
         className="w-full sm:w-40"
         aria-label="並び替え"
       >
-        <option value="best-match">ベストマッチ</option>
-        <option value="stars">スター数</option>
-        <option value="forks">フォーク数</option>
-        <option value="updated">更新日</option>
+        {SORT_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
       </Select>
 
       <Button type="submit" disabled={!query.trim()}>

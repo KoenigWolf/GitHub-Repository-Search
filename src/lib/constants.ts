@@ -1,3 +1,5 @@
+export const APP_NAME = "GitHub Repository Search";
+
 /** @see https://github.com/ozh/github-colors */
 export const LANGUAGE_COLORS: Record<string, string> = {
   JavaScript: "#f1e05a",
@@ -59,3 +61,21 @@ export const GITHUB_API = {
   CACHE_SEARCH: 60,
   CACHE_REPO: 300,
 } as const;
+
+export const UI = {
+  MAX_TOPICS_DISPLAY: 5,
+  SKELETON_ITEM_COUNT: 5,
+  SKELETON_STAT_CARD_COUNT: 4,
+  PAGINATION_DELTA: 1,
+} as const;
+
+export const SORT_OPTIONS = [
+  { value: "best-match", label: "ベストマッチ" },
+  { value: "stars", label: "スター数" },
+  { value: "forks", label: "フォーク数" },
+  { value: "updated", label: "更新日" },
+] as const;
+
+export type SortValue = (typeof SORT_OPTIONS)[number]["value"];
+
+export const SORT_VALUES = SORT_OPTIONS.map((opt) => opt.value) as [SortValue, ...SortValue[]];
