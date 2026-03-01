@@ -69,7 +69,7 @@ export function RepositoryDetailSkeleton() {
         </div>
       </Card>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
+        {Array.from({ length: UI.SKELETON_STAT_CARD_COUNT }).map((_, i) => (
           <Skeleton key={i} className="h-24 rounded-lg" />
         ))}
       </div>
