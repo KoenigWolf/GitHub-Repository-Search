@@ -441,7 +441,7 @@ export function calculatePageNumbers(
 
 ## ファイル構成（リファクタリング後）
 
-```
+```text
 src/
 ├── components/
 │   ├── ui/
