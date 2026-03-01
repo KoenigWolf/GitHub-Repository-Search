@@ -1,3 +1,5 @@
+export const APP_NAME = "GitHub Repository Search";
+
 /** @see https://github.com/ozh/github-colors */
 export const LANGUAGE_COLORS: Record<string, string> = {
   JavaScript: "#f1e05a",
@@ -65,7 +67,6 @@ export const UI = {
   SKELETON_ITEM_COUNT: 5,
   SKELETON_STAT_CARD_COUNT: 4,
   PAGINATION_DELTA: 1,
-  ANNOUNCEMENT_CLEAR_DELAY_MS: 1000,
 } as const;
 
 export const SORT_OPTIONS = [
@@ -76,3 +77,5 @@ export const SORT_OPTIONS = [
 ] as const;
 
 export type SortValue = (typeof SORT_OPTIONS)[number]["value"];
+
+export const SORT_VALUES = SORT_OPTIONS.map((opt) => opt.value) as [SortValue, ...SortValue[]];

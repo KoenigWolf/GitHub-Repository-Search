@@ -1,4 +1,4 @@
-import { SORT_OPTIONS, type SortValue } from "@/lib/constants";
+import { SORT_VALUES, type SortValue } from "@/lib/constants";
 
 /**
  * 検索クエリを正規化する
@@ -21,14 +21,12 @@ export function normalizePageNumber(pageStr: string): number {
   return parsed;
 }
 
-const VALID_SORT_VALUES = SORT_OPTIONS.map((opt) => opt.value);
-
 /**
  * ソートパラメータを正規化する
  * - 無効な値の場合は "best-match" を返す
  */
 export function normalizeSortParam(value: string | undefined): SortValue {
-  if (value && VALID_SORT_VALUES.includes(value as SortValue)) {
+  if (value && SORT_VALUES.includes(value as SortValue)) {
     return value as SortValue;
   }
   return "best-match";
