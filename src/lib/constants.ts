@@ -1,7 +1,4 @@
-/**
- * GitHub の言語カラーマッピング
- * @see https://github.com/ozh/github-colors
- */
+/** @see https://github.com/ozh/github-colors */
 export const LANGUAGE_COLORS: Record<string, string> = {
   JavaScript: "#f1e05a",
   TypeScript: "#3178c6",
@@ -51,14 +48,8 @@ export const LANGUAGE_COLORS: Record<string, string> = {
   Cairo: "#ff4a48",
 } as const;
 
-/**
- * デフォルトの言語カラー
- */
 export const DEFAULT_LANGUAGE_COLOR = "#808080";
 
-/**
- * GitHub API の設定
- */
 export const GITHUB_API = {
   BASE_URL: "https://api.github.com",
   SEARCH_REPOS_ENDPOINT: "/search/repositories",

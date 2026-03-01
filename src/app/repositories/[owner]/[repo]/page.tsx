@@ -69,7 +69,6 @@ async function RepositoryDetail({
 }) {
   const result = await getRepository(owner, repo);
 
-  // Result型パターン: 成功/失敗を型で判別
   if (!result.success) {
     if (result.error.code === "NOT_FOUND") {
       notFound();

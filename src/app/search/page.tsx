@@ -9,16 +9,10 @@ import { searchRepositories } from "@/lib/api/github-client";
 import type { SearchParams } from "@/lib/schemas/github";
 import { GITHUB_API } from "@/lib/constants";
 
-/**
- * クエリ文字列を正規化（トリム + 連続空白を単一スペースに）
- */
 function normalizeQuery(query: string): string {
   return query.trim().replace(/\s+/g, " ");
 }
 
-/**
- * ページ番号を正規化（NaNや無効な値を1にクランプ）
- */
 function normalizePageNumber(pageStr: string): number {
   const parsed = parseInt(pageStr, 10);
   if (Number.isNaN(parsed) || parsed < 1) {
@@ -64,7 +58,6 @@ async function SearchResults({
     per_page: GITHUB_API.DEFAULT_PER_PAGE,
   });
 
-  // Result型パターン: 成功/失敗を型で判別
   if (!result.success) {
     return <ErrorDisplay message={result.error.message} />;
   }
