@@ -15,6 +15,15 @@ export class GitHubApiError extends Error {
   }
 }
 
+// 環境変数の検証（起動時に警告）
+if (typeof window === "undefined") {
+  if (process.env.NODE_ENV === "production" && !process.env.GITHUB_TOKEN) {
+    console.warn(
+      "[GitHub API] GITHUB_TOKEN が設定されていません。レート制限 (60 req/h) が適用されます。"
+    );
+  }
+}
+
 function getHeaders(): HeadersInit {
   const headers: HeadersInit = {
     Accept: "application/vnd.github+json",
@@ -52,10 +61,18 @@ export async function searchRepositories(
     url.searchParams.set("order", order);
   }
 
-  const response = await fetch(url.toString(), {
-    headers: getHeaders(),
-    next: { revalidate: 60 },
-  });
+  let response: Response;
+  try {
+    response = await fetch(url.toString(), {
+      headers: getHeaders(),
+      next: { revalidate: 60 },
+    });
+  } catch {
+    throw new GitHubApiError(
+      "ネットワークエラーが発生しました。インターネット接続を確認してください。",
+      0
+    );
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -96,10 +113,18 @@ export async function getRepository(
 ): Promise<GitHubRepository> {
   const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`;
 
-  const response = await fetch(url, {
-    headers: getHeaders(),
-    next: { revalidate: 300 },
-  });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      headers: getHeaders(),
+      next: { revalidate: 300 },
+    });
+  } catch {
+    throw new GitHubApiError(
+      "ネットワークエラーが発生しました。インターネット接続を確認してください。",
+      0
+    );
+  }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
