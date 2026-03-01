@@ -46,10 +46,8 @@ export function calculatePageNumbers(
     pages.push("ellipsis");
   }
 
-  // 最後のページを追加（2ページ以上の場合）
-  if (totalPages > 1) {
-    pages.push(totalPages);
-  }
+  // 最後のページを追加
+  pages.push(totalPages);
 
   return pages;
 }

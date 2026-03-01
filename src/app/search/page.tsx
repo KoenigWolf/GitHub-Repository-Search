@@ -22,7 +22,7 @@ export async function generateMetadata({
   searchParams,
 }: SearchPageProps): Promise<Metadata> {
   const params = await searchParams;
-  const query = params.q;
+  const query = normalizeQuery(params.q ?? "");
 
   if (query) {
     return {
