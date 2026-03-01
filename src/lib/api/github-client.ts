@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Result, ok, err } from "@/lib/result";
+import { type Result, ok, err } from "@/lib/result";
 import {
   GitHubRepositorySchema,
   GitHubSearchResponseSchema,
@@ -206,16 +206,3 @@ export async function getRepository(
   return validateResponse(response, GitHubRepositorySchema);
 }
 
-/**
- * 後方互換性のためのエラークラス（非推奨）
- * @deprecated Result型パターンを使用してください
- */
-export class GitHubApiErrorLegacy extends Error {
-  constructor(
-    message: string,
-    public status: number
-  ) {
-    super(message);
-    this.name = "GitHubApiError";
-  }
-}
