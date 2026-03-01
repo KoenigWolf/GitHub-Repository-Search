@@ -4,6 +4,7 @@ import { useMemo, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { calculatePageNumbers } from "@/lib/pagination";
 
 interface PaginationProps {
   currentPage: number;
@@ -24,37 +25,10 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
     [router, searchParams, totalPages]
   );
 
-  const pageNumbers = useMemo((): (number | "ellipsis")[] => {
-    if (totalPages <= 1) {
-      return [];
-    }
-
-    const pages: (number | "ellipsis")[] = [];
-    const delta = 1;
-
-    pages.push(1);
-
-    const rangeStart = Math.max(2, currentPage - delta);
-    const rangeEnd = Math.min(totalPages - 1, currentPage + delta);
-
-    if (rangeStart > 2) {
-      pages.push("ellipsis");
-    }
-
-    for (let i = rangeStart; i <= rangeEnd; i++) {
-      pages.push(i);
-    }
-
-    if (rangeEnd < totalPages - 1) {
-      pages.push("ellipsis");
-    }
-
-    if (totalPages > 1) {
-      pages.push(totalPages);
-    }
-
-    return pages;
-  }, [currentPage, totalPages]);
+  const pageNumbers = useMemo(
+    () => calculatePageNumbers(currentPage, totalPages),
+    [currentPage, totalPages]
+  );
 
   if (totalPages <= 1) {
     return null;

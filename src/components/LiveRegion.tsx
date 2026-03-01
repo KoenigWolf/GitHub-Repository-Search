@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { UI } from "@/lib/constants";
 
 interface LiveRegionProps {
   message: string;
@@ -11,7 +12,7 @@ interface LiveRegionProps {
 export function LiveRegion({
   message,
   priority = "polite",
-  clearAfter = 1000,
+  clearAfter = UI.ANNOUNCEMENT_CLEAR_DELAY_MS,
 }: LiveRegionProps) {
   const [announcement, setAnnouncement] = useState("");
   const [announceKey, setAnnounceKey] = useState(0);
