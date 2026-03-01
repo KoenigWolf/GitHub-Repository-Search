@@ -112,9 +112,7 @@ export function usePagination(currentPage: number, totalPages: number) {
       pages.push("ellipsis");
     }
 
-    if (totalPages > 1) {
-      pages.push(totalPages);
-    }
+    pages.push(totalPages);
 
     return pages;
   }, [currentPage, totalPages]);
