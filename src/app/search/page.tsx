@@ -21,6 +21,15 @@ function normalizePageNumber(pageStr: string): number {
   return parsed;
 }
 
+const VALID_SORT_VALUES = ["stars", "forks", "updated", "best-match"] as const;
+
+function normalizeSortParam(value: string | undefined): SearchParams["sort"] {
+  if (value && VALID_SORT_VALUES.includes(value as SearchParams["sort"])) {
+    return value as SearchParams["sort"];
+  }
+  return "best-match";
+}
+
 interface SearchPageProps {
   searchParams: Promise<{ q?: string; sort?: string; page?: string }>;
 }
@@ -86,7 +95,7 @@ async function SearchResults({
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
   const query = normalizeQuery(params.q ?? "");
-  const sort = (params.sort ?? "best-match") as SearchParams["sort"];
+  const sort = normalizeSortParam(params.sort);
   const page = normalizePageNumber(params.page ?? "1");
 
   return (
