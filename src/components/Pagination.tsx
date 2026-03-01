@@ -16,11 +16,12 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
 
   const navigateToPage = useCallback(
     (page: number) => {
+      const target = Math.max(1, Math.min(page, totalPages));
       const params = new URLSearchParams(searchParams.toString());
-      params.set("page", String(page));
+      params.set("page", String(target));
       router.push(`/search?${params.toString()}`);
     },
-    [router, searchParams]
+    [router, searchParams, totalPages]
   );
 
   const pageNumbers = useMemo((): (number | "ellipsis")[] => {
