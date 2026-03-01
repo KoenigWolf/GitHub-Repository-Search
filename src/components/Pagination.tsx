@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,17 +14,20 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  if (totalPages <= 1) {
-    return null;
-  }
+  const navigateToPage = useCallback(
+    (page: number) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", String(page));
+      router.push(`/search?${params.toString()}`);
+    },
+    [router, searchParams]
+  );
 
-  const navigateToPage = (page: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(page));
-    router.push(`/search?${params.toString()}`);
-  };
+  const pageNumbers = useMemo((): (number | "ellipsis")[] => {
+    if (totalPages <= 1) {
+      return [];
+    }
 
-  const getPageNumbers = (): (number | "ellipsis")[] => {
     const pages: (number | "ellipsis")[] = [];
     const delta = 1;
 
@@ -49,9 +53,11 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
     }
 
     return pages;
-  };
+  }, [currentPage, totalPages]);
 
-  const pageNumbers = getPageNumbers();
+  if (totalPages <= 1) {
+    return null;
+  }
 
   return (
     <nav aria-label="ページネーション" className="flex items-center justify-center gap-1">

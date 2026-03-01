@@ -4,28 +4,7 @@ import { Star, GitFork, AlertCircle, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { GitHubRepository } from "@/types/github";
 import { formatNumber, formatDate } from "@/lib/utils";
-
-const LANGUAGE_COLORS: Record<string, string> = {
-  JavaScript: "#f1e05a",
-  TypeScript: "#3178c6",
-  Python: "#3572A5",
-  Java: "#b07219",
-  Go: "#00ADD8",
-  Rust: "#dea584",
-  Ruby: "#701516",
-  PHP: "#4F5D95",
-  "C++": "#f34b7d",
-  C: "#555555",
-  "C#": "#178600",
-  Swift: "#F05138",
-  Kotlin: "#A97BFF",
-  Dart: "#00B4AB",
-  Shell: "#89e051",
-  HTML: "#e34c26",
-  CSS: "#563d7c",
-  Vue: "#41b883",
-  Svelte: "#ff3e00",
-};
+import { LANGUAGE_COLORS, DEFAULT_LANGUAGE_COLOR } from "@/lib/constants";
 
 interface RepositoryCardProps {
   repository: GitHubRepository;
@@ -80,7 +59,7 @@ export function RepositoryCard({ repository }: RepositoryCardProps) {
                 <span
                   className="h-3 w-3 rounded-full"
                   style={{
-                    backgroundColor: LANGUAGE_COLORS[language] ?? "#808080",
+                    backgroundColor: LANGUAGE_COLORS[language] ?? DEFAULT_LANGUAGE_COLOR,
                   }}
                   aria-hidden="true"
                 />
