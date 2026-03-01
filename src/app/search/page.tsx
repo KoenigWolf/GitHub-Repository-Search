@@ -7,7 +7,7 @@ import { SearchResultsSkeleton } from "@/components/Skeleton";
 import { ErrorDisplay } from "@/components/ErrorDisplay";
 import { EmptyState } from "@/components/EmptyState";
 import { searchRepositories } from "@/lib/api/github-client";
-import { GITHUB_API, type SortValue } from "@/lib/constants";
+import { APP_NAME, GITHUB_API, type SortValue } from "@/lib/constants";
 import {
   normalizeQuery,
   normalizePageNumber,
@@ -26,12 +26,12 @@ export async function generateMetadata({
 
   if (query) {
     return {
-      title: `"${query}" の検索結果 - GitHub Repository Search`,
+      title: `"${query}" の検索結果 - ${APP_NAME}`,
     };
   }
 
   return {
-    title: "GitHub Repository Search",
+    title: APP_NAME,
   };
 }
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Link from "next/link";
+import { APP_NAME } from "@/lib/constants";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -15,7 +16,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "GitHub Repository Search",
+  title: APP_NAME,
   description: "Search and explore GitHub repositories",
 };
 
@@ -49,7 +50,7 @@ export default function RootLayout({
               className="flex items-center gap-2 text-lg font-semibold hover:opacity-80"
             >
               <GitHubLogo className="h-8 w-8" />
-              <span>GitHub Repository Search</span>
+              <span>{APP_NAME}</span>
             </Link>
           </div>
         </header>

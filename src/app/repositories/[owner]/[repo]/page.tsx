@@ -24,6 +24,7 @@ import { ErrorDisplay } from "@/components/ErrorDisplay";
 import { RepositoryTopics } from "@/components/RepositoryTopics";
 import { RepositoryDetailSkeleton } from "@/components/Skeleton";
 import { getRepository } from "@/lib/api/github-client";
+import { APP_NAME } from "@/lib/constants";
 import { formatDate } from "@/lib/utils";
 
 interface RepositoryPageProps {
@@ -35,7 +36,7 @@ export async function generateMetadata({
 }: RepositoryPageProps): Promise<Metadata> {
   const { owner, repo } = await params;
   return {
-    title: `${owner}/${repo} - GitHub Repository Search`,
+    title: `${owner}/${repo} - ${APP_NAME}`,
   };
 }
 

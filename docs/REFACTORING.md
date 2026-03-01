@@ -116,8 +116,8 @@ export function buttonVariants({
 export const UI = {
   MAX_TOPICS_DISPLAY: 5,
   SKELETON_ITEM_COUNT: 5,
+  SKELETON_STAT_CARD_COUNT: 4,
   PAGINATION_DELTA: 1,
-  ANNOUNCEMENT_CLEAR_DELAY_MS: 1000,
 } as const;
 
 export const SORT_OPTIONS = [
@@ -134,7 +134,6 @@ export type SortValue = (typeof SORT_OPTIONS)[number]["value"];
 - `RepositoryCard.tsx`
 - `RepositoryTopics.tsx`
 - `Skeleton.tsx`
-- `LiveRegion.tsx`
 - `Pagination.tsx`
 - `SearchForm.tsx`
 
@@ -338,28 +337,21 @@ export function EmptyState({
 
 **実装内容**:
 ```tsx
-export function normalizeQuery(query: unknown): string {
-  if (typeof query !== "string") return "";
-  return query.trim();
+export function normalizeQuery(query: string): string {
+  return query.trim().replace(/\s+/g, " ");
 }
 
-export function normalizePageNumber(page: unknown): number {
-  if (typeof page === "number" && Number.isInteger(page) && page >= 1) {
-    return page;
+export function normalizePageNumber(pageStr: string): number {
+  const parsed = parseInt(pageStr, 10);
+  if (Number.isNaN(parsed) || parsed < 1) {
+    return 1;
   }
-  if (typeof page === "string") {
-    const parsed = parseInt(page, 10);
-    if (!Number.isNaN(parsed) && parsed >= 1) {
-      return parsed;
-    }
-  }
-  return 1;
+  return parsed;
 }
 
-export function normalizeSortParam(sort: unknown): SortValue {
-  const validSorts: SortValue[] = ["best-match", "stars", "forks", "updated"];
-  if (typeof sort === "string" && validSorts.includes(sort as SortValue)) {
-    return sort as SortValue;
+export function normalizeSortParam(value: string | undefined): SortValue {
+  if (value && SORT_VALUES.includes(value as SortValue)) {
+    return value as SortValue;
   }
   return "best-match";
 }
@@ -453,12 +445,11 @@ src/
 │   ├── BackButton.tsx        # 新規作成
 │   ├── EmptyState.tsx        # 新規作成
 │   ├── ErrorDisplay.tsx
-│   ├── LiveRegion.tsx
 │   ├── Pagination.tsx
 │   ├── RepositoryCard.tsx
+│   ├── RepositoryList.tsx
 │   ├── RepositoryTopics.tsx  # 新規作成
 │   ├── SearchForm.tsx
-│   ├── SearchResults.tsx
 │   └── Skeleton.tsx          # 統合
 ├── lib/
 │   ├── api/
