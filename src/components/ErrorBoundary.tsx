@@ -73,13 +73,14 @@ export class ErrorBoundary extends Component<
 
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
+  onError?: (error: Error, errorInfo: React.ErrorInfo) => void
 ): React.FC<P> {
   const displayName = Component.displayName || Component.name || "Component";
 
   const WithErrorBoundary: React.FC<P> = (props: P) => {
     return (
-      <ErrorBoundary fallback={fallback}>
+      <ErrorBoundary fallback={fallback} {...(onError && { onError })}>
         <Component {...props} />
       </ErrorBoundary>
     );
