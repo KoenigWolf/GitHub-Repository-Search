@@ -2,9 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import {
-  ArrowLeft,
   ExternalLink,
   Star,
   Eye,
@@ -17,9 +15,16 @@ import {
   Globe,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { IconText } from "@/components/ui/icon-text";
+import { StatCard } from "@/components/ui/stat-card";
+import { BackButton } from "@/components/BackButton";
 import { ErrorDisplay } from "@/components/ErrorDisplay";
+import { RepositoryTopics } from "@/components/RepositoryTopics";
+import { RepositoryDetailSkeleton } from "@/components/Skeleton";
 import { getRepository } from "@/lib/api/github-client";
-import { formatNumber, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 
 interface RepositoryPageProps {
   params: Promise<{ owner: string; repo: string }>;
@@ -32,32 +37,6 @@ export async function generateMetadata({
   return {
     title: `${owner}/${repo} - GitHub Repository Search`,
   };
-}
-
-function RepositoryDetailSkeleton() {
-  return (
-    <div className="space-y-6" aria-busy="true">
-      <div className="h-8 w-32 animate-pulse rounded bg-muted" />
-      <div className="rounded-lg border border-border bg-card p-6">
-        <div className="flex items-start gap-4">
-          <div className="h-16 w-16 animate-pulse rounded-full bg-muted" />
-          <div className="flex-1 space-y-3">
-            <div className="h-7 w-64 animate-pulse rounded bg-muted" />
-            <div className="h-5 w-full animate-pulse rounded bg-muted" />
-            <div className="h-5 w-3/4 animate-pulse rounded bg-muted" />
-          </div>
-        </div>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-24 animate-pulse rounded-lg border border-border bg-card"
-          />
-        ))}
-      </div>
-    </div>
-  );
 }
 
 async function RepositoryDetail({
@@ -83,39 +62,33 @@ async function RepositoryDetail({
       icon: Star,
       value: repository.stargazers_count,
       label: "Stars",
-      color: "text-yellow-500",
+      iconClassName: "text-yellow-500",
     },
     {
       icon: Eye,
       value: repository.watchers_count,
       label: "Watchers",
-      color: "text-blue-500",
+      iconClassName: "text-blue-500",
     },
     {
       icon: GitFork,
       value: repository.forks_count,
       label: "Forks",
-      color: "text-green-500",
+      iconClassName: "text-green-500",
     },
     {
       icon: AlertCircle,
       value: repository.open_issues_count,
       label: "Open Issues",
-      color: "text-orange-500",
+      iconClassName: "text-orange-500",
     },
-  ];
+  ] as const;
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/search"
-        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 gap-2"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        検索に戻る
-      </Link>
+      <BackButton />
 
-      <div className="rounded-lg border border-border bg-card p-6">
+      <Card className="p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
           <Image
             src={repository.owner.avatar_url}
@@ -143,21 +116,14 @@ async function RepositoryDetail({
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               {repository.language && (
-                <span className="flex items-center gap-1">
-                  <Code className="h-4 w-4" />
-                  {repository.language}
-                </span>
+                <IconText icon={Code}>{repository.language}</IconText>
               )}
-              <span className="flex items-center gap-1">
-                <GitBranch className="h-4 w-4" />
-                {repository.default_branch}
-              </span>
-              <span className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
+              <IconText icon={GitBranch}>{repository.default_branch}</IconText>
+              <IconText icon={Calendar}>
                 <time dateTime={repository.updated_at}>
                   {formatDate(repository.updated_at)}
                 </time>
-              </span>
+              </IconText>
             </div>
 
             <div>
@@ -165,7 +131,7 @@ async function RepositoryDetail({
                 href={repository.html_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 gap-2"
+                className={buttonVariants({ variant: "outline", className: "gap-2" })}
               >
                 <ExternalLink className="h-4 w-4" />
                 GitHubで開く
@@ -173,35 +139,19 @@ async function RepositoryDetail({
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map(({ icon: Icon, value, label, color }) => (
-          <div
-            key={label}
-            className="flex items-center gap-4 rounded-lg border border-border bg-card p-4"
-          >
-            <Icon className={`h-8 w-8 ${color}`} />
-            <div>
-              <div className="text-2xl font-bold">{formatNumber(value)}</div>
-              <div className="text-sm text-muted-foreground">{label}</div>
-            </div>
-          </div>
+        {stats.map((stat) => (
+          <StatCard key={stat.label} {...stat} />
         ))}
       </div>
 
-      {repository.topics.length > 0 && (
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold">Topics</h2>
-          <div className="flex flex-wrap gap-2">
-            {repository.topics.map((topic) => (
-              <Badge key={topic} variant="secondary">
-                {topic}
-              </Badge>
-            ))}
-          </div>
-        </div>
-      )}
+      <RepositoryTopics
+        topics={repository.topics}
+        maxDisplay={Infinity}
+        showTitle
+      />
     </div>
   );
 }
