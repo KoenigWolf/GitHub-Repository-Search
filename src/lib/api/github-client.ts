@@ -9,9 +9,6 @@ import {
 } from "@/lib/schemas/github";
 import { GITHUB_API } from "@/lib/constants";
 
-/**
- * GitHub API エラーの種類
- */
 export type GitHubApiErrorCode =
   | "NETWORK_ERROR"
   | "RATE_LIMIT"
@@ -20,9 +17,6 @@ export type GitHubApiErrorCode =
   | "VALIDATION_ERROR"
   | "UNKNOWN_ERROR";
 
-/**
- * 構造化されたAPIエラー
- */
 export interface GitHubApiError {
   code: GitHubApiErrorCode;
   message: string;
@@ -30,9 +24,6 @@ export interface GitHubApiError {
   details?: unknown;
 }
 
-/**
- * エラーコードに対応するユーザー向けメッセージ
- */
 const ERROR_MESSAGES: Record<GitHubApiErrorCode, string> = {
   NETWORK_ERROR: "ネットワークエラーが発生しました。インターネット接続を確認してください。",
   RATE_LIMIT: "APIレート制限に達しました。しばらく待ってから再試行してください。",
@@ -42,9 +33,6 @@ const ERROR_MESSAGES: Record<GitHubApiErrorCode, string> = {
   UNKNOWN_ERROR: "予期しないエラーが発生しました。",
 };
 
-/**
- * APIエラーを作成するファクトリ関数
- */
 function createApiError(
   code: GitHubApiErrorCode,
   status: number,
@@ -58,9 +46,6 @@ function createApiError(
   };
 }
 
-/**
- * HTTPステータスコードからエラーコードを判定
- */
 function getErrorCodeFromStatus(status: number): GitHubApiErrorCode {
   switch (status) {
     case 403:
@@ -74,9 +59,6 @@ function getErrorCodeFromStatus(status: number): GitHubApiErrorCode {
   }
 }
 
-/**
- * 環境変数の検証（モジュール読み込み時に実行）
- */
 if (typeof window === "undefined") {
   if (process.env.NODE_ENV === "production" && !process.env.GITHUB_TOKEN) {
     console.warn(
@@ -85,9 +67,6 @@ if (typeof window === "undefined") {
   }
 }
 
-/**
- * APIリクエストヘッダーを生成
- */
 function createHeaders(): HeadersInit {
   const headers: HeadersInit = {
     Accept: "application/vnd.github+json",
@@ -101,9 +80,6 @@ function createHeaders(): HeadersInit {
   return headers;
 }
 
-/**
- * 安全なfetchラッパー
- */
 async function safeFetch(
   url: string,
   options: RequestInit
@@ -111,14 +87,14 @@ async function safeFetch(
   try {
     const response = await fetch(url, options);
     return ok(response);
-  } catch {
-    return err(createApiError("NETWORK_ERROR", 0));
+  } catch (error) {
+    const errorDetails = error instanceof Error
+      ? { message: error.message, stack: error.stack }
+      : error;
+    return err(createApiError("NETWORK_ERROR", 0, errorDetails));
   }
 }
 
-/**
- * レスポンスをZodスキーマで検証
- */
 async function validateResponse<T>(
   response: Response,
   schema: z.ZodType<T>
@@ -139,12 +115,6 @@ async function validateResponse<T>(
   }
 }
 
-/**
- * GitHub リポジトリ検索
- *
- * @param params - 検索パラメータ
- * @returns Result型でラップされた検索結果
- */
 export async function searchRepositories(
   params: SearchParamsInput
 ): Promise<Result<SearchResult, GitHubApiError>> {
@@ -156,7 +126,6 @@ export async function searchRepositories(
     per_page = GITHUB_API.DEFAULT_PER_PAGE,
   } = params;
 
-  // 空クエリの早期リターン
   if (!query.trim()) {
     return ok({
       repositories: [],
@@ -166,7 +135,6 @@ export async function searchRepositories(
     });
   }
 
-  // URLの構築
   const url = new URL(`${GITHUB_API.BASE_URL}${GITHUB_API.SEARCH_REPOS_ENDPOINT}`);
   url.searchParams.set("q", query);
   url.searchParams.set("page", String(page));
@@ -177,7 +145,6 @@ export async function searchRepositories(
     url.searchParams.set("order", order);
   }
 
-  // APIリクエスト
   const fetchResult = await safeFetch(url.toString(), {
     headers: createHeaders(),
     next: { revalidate: GITHUB_API.CACHE_SEARCH },
@@ -189,13 +156,10 @@ export async function searchRepositories(
 
   const response = fetchResult.data;
 
-  // エラーレスポンスの処理
   if (!response.ok) {
-    const errorCode = getErrorCodeFromStatus(response.status);
-    return err(createApiError(errorCode, response.status));
+    return err(createApiError(getErrorCodeFromStatus(response.status), response.status));
   }
 
-  // レスポンスの検証
   const validationResult = await validateResponse(
     response,
     GitHubSearchResponseSchema
@@ -207,7 +171,6 @@ export async function searchRepositories(
 
   const data = validationResult.data;
 
-  // 結果の変換
   const maxResults = Math.min(data.total_count, GITHUB_API.MAX_SEARCH_RESULTS);
   const totalPages = Math.ceil(maxResults / per_page);
 
@@ -219,20 +182,12 @@ export async function searchRepositories(
   });
 }
 
-/**
- * リポジトリ詳細を取得
- *
- * @param owner - リポジトリオーナー
- * @param repo - リポジトリ名
- * @returns Result型でラップされたリポジトリ情報
- */
 export async function getRepository(
   owner: string,
   repo: string
 ): Promise<Result<GitHubRepository, GitHubApiError>> {
   const url = `${GITHUB_API.BASE_URL}${GITHUB_API.REPOS_ENDPOINT}/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`;
 
-  // APIリクエスト
   const fetchResult = await safeFetch(url, {
     headers: createHeaders(),
     next: { revalidate: GITHUB_API.CACHE_REPO },
@@ -244,13 +199,10 @@ export async function getRepository(
 
   const response = fetchResult.data;
 
-  // エラーレスポンスの処理
   if (!response.ok) {
-    const errorCode = getErrorCodeFromStatus(response.status);
-    return err(createApiError(errorCode, response.status));
+    return err(createApiError(getErrorCodeFromStatus(response.status), response.status));
   }
 
-  // レスポンスの検証
   return validateResponse(response, GitHubRepositorySchema);
 }
 

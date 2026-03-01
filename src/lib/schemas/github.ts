@@ -1,10 +1,5 @@
 import { z } from "zod";
 
-/**
- * GitHub API レスポンスのZodスキーマ
- * ランタイムでの型検証を提供し、APIレスポンスの整合性を保証
- */
-
 export const GitHubOwnerSchema = z.object({
   login: z.string(),
   avatar_url: z.string().url(),
@@ -40,15 +35,11 @@ export const GitHubErrorResponseSchema = z.object({
   documentation_url: z.string().optional(),
 });
 
-// 型のエクスポート（スキーマから推論）
 export type GitHubOwner = z.infer<typeof GitHubOwnerSchema>;
 export type GitHubRepository = z.infer<typeof GitHubRepositorySchema>;
 export type GitHubSearchResponse = z.infer<typeof GitHubSearchResponseSchema>;
 export type GitHubErrorResponse = z.infer<typeof GitHubErrorResponseSchema>;
 
-/**
- * 検索パラメータのスキーマ
- */
 export const SearchParamsSchema = z.object({
   query: z.string().min(1, "検索クエリは必須です"),
   sort: z.enum(["stars", "forks", "updated", "best-match"]).default("best-match"),
@@ -57,15 +48,9 @@ export const SearchParamsSchema = z.object({
   per_page: z.number().int().min(1).max(100).default(30),
 });
 
-/** 検索パラメータの出力型（デフォルト適用後） */
 export type SearchParams = z.infer<typeof SearchParamsSchema>;
-
-/** 検索パラメータの入力型（デフォルトフィールドはオプショナル） */
 export type SearchParamsInput = z.input<typeof SearchParamsSchema>;
 
-/**
- * 検索結果のスキーマ
- */
 export const SearchResultSchema = z.object({
   repositories: z.array(GitHubRepositorySchema),
   totalCount: z.number(),

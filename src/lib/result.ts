@@ -1,10 +1,3 @@
-/**
- * Result型パターン - 関数型プログラミングスタイルのエラーハンドリング
- *
- * 例外をスローする代わりに、成功または失敗を表す型を返す
- * これにより型安全なエラーハンドリングが可能になる
- */
-
 export type Result<T, E = Error> = Success<T> | Failure<E>;
 
 export interface Success<T> {
@@ -17,27 +10,15 @@ export interface Failure<E> {
   readonly error: E;
 }
 
-/**
- * 成功結果を作成
- */
 export function ok<T>(data: T): Success<T> {
   return { success: true, data };
 }
 
-/**
- * 失敗結果を作成
- */
 export function err<E>(error: E): Failure<E> {
   return { success: false, error };
 }
 
-/**
- * Result型のユーティリティ関数
- */
 export const Result = {
-  /**
-   * 成功の場合のみ関数を適用
-   */
   map<T, U, E>(result: Result<T, E>, fn: (data: T) => U): Result<U, E> {
     if (result.success) {
       return ok(fn(result.data));
@@ -45,22 +26,20 @@ export const Result = {
     return result;
   },
 
-  /**
-   * 成功の場合のみ非同期関数を適用
-   */
   async mapAsync<T, U, E>(
     result: Result<T, E>,
     fn: (data: T) => Promise<U>
   ): Promise<Result<U, E>> {
     if (result.success) {
-      return ok(await fn(result.data));
+      try {
+        return ok(await fn(result.data));
+      } catch (error) {
+        return err(error as E);
+      }
     }
     return result;
   },
 
-  /**
-   * 成功の場合のみResult返す関数を適用（flatMap）
-   */
   flatMap<T, U, E>(
     result: Result<T, E>,
     fn: (data: T) => Result<U, E>
@@ -71,9 +50,6 @@ export const Result = {
     return result;
   },
 
-  /**
-   * 失敗の場合のみ関数を適用
-   */
   mapError<T, E, F>(result: Result<T, E>, fn: (error: E) => F): Result<T, F> {
     if (!result.success) {
       return err(fn(result.error));
@@ -81,9 +57,6 @@ export const Result = {
     return result;
   },
 
-  /**
-   * デフォルト値を返す
-   */
   unwrapOr<T, E>(result: Result<T, E>, defaultValue: T): T {
     if (result.success) {
       return result.data;
@@ -91,9 +64,6 @@ export const Result = {
     return defaultValue;
   },
 
-  /**
-   * 成功の場合は値を返し、失敗の場合は例外をスロー
-   */
   unwrap<T, E>(result: Result<T, E>): T {
     if (result.success) {
       return result.data;
@@ -101,9 +71,6 @@ export const Result = {
     throw result.error;
   },
 
-  /**
-   * Promise<Result>からResultを作成
-   */
   async fromPromise<T, E = Error>(
     promise: Promise<T>,
     errorMapper?: (error: unknown) => E
@@ -119,9 +86,6 @@ export const Result = {
     }
   },
 
-  /**
-   * 複数のResultを結合
-   */
   combine<T extends readonly Result<unknown, unknown>[]>(
     results: T
   ): Result<
