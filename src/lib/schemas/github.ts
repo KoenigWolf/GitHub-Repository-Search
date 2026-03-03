@@ -47,11 +47,9 @@ export const SearchParamsSchema = z.object({
 
 export type SearchParamsInput = z.input<typeof SearchParamsSchema>;
 
-export const SearchResultSchema = z.object({
-  repositories: z.array(GitHubRepositorySchema),
-  totalCount: z.number(),
-  currentPage: z.number(),
-  totalPages: z.number(),
-});
-
-export type SearchResult = z.infer<typeof SearchResultSchema>;
+export interface SearchResult {
+  repositories: GitHubRepository[];
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+}
