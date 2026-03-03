@@ -19,10 +19,8 @@ describe("calculatePageNumbers", () => {
   });
 
   it("多くのページがある場合は省略記号を含む", () => {
-    // 1ページ目: [1, 2, ..., 10]
     expect(calculatePageNumbers(1, 10)).toEqual([1, 2, "ellipsis", 10]);
 
-    // 5ページ目: [1, ..., 4, 5, 6, ..., 10]
     expect(calculatePageNumbers(5, 10)).toEqual([
       1,
       "ellipsis",
@@ -33,7 +31,6 @@ describe("calculatePageNumbers", () => {
       10,
     ]);
 
-    // 10ページ目: [1, ..., 9, 10]
     expect(calculatePageNumbers(10, 10)).toEqual([1, "ellipsis", 9, 10]);
   });
 
@@ -46,7 +43,6 @@ describe("calculatePageNumbers", () => {
   });
 
   it("カスタム delta を指定できる", () => {
-    // delta=2 の場合、現在ページの前後2ページを表示
     expect(calculatePageNumbers(5, 10, 2)).toEqual([
       1,
       "ellipsis",
