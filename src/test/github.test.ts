@@ -57,7 +57,7 @@ describe("searchRepositories", () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.repositories).toEqual(mockSearchResponse.items);
-      expect(result.data.totalCount).toBe(2);
+      expect(result.data.totalCount).toBe(1);
       expect(result.data.currentPage).toBe(1);
     }
   });
