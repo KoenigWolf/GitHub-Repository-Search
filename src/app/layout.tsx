@@ -16,8 +16,22 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: APP_NAME,
-  description: "Search and explore GitHub repositories",
+  title: {
+    default: APP_NAME,
+    template: `%s - ${APP_NAME}`,
+  },
+  description: "GitHubリポジトリを検索・閲覧できるWebアプリケーション",
+  openGraph: {
+    title: APP_NAME,
+    description: "GitHubリポジトリを検索・閲覧できるWebアプリケーション",
+    type: "website",
+    locale: "ja_JP",
+  },
+  twitter: {
+    card: "summary",
+    title: APP_NAME,
+    description: "GitHubリポジトリを検索・閲覧できるWebアプリケーション",
+  },
 };
 
 function GitHubLogo({ className }: { className?: string }) {

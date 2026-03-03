@@ -1,29 +1,8 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { RepositoryCard } from "@/components/RepositoryCard";
 import { mockRepository } from "./fixtures";
 import type { GitHubRepository } from "@/lib/schemas/github";
-
-vi.mock("next/image", () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => (
-    <img src={src} alt={alt} />
-  ),
-}));
-
-vi.mock("next/link", () => ({
-  default: ({
-    href,
-    children,
-    ...props
-  }: {
-    href: string;
-    children: React.ReactNode;
-  }) => (
-    <a href={href} {...props}>
-      {children}
-    </a>
-  ),
-}));
 
 describe("RepositoryCard", () => {
   it("リポジトリ名を表示する", () => {

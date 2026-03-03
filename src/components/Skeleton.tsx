@@ -15,6 +15,24 @@ function Skeleton({ className }: SkeletonProps) {
   );
 }
 
+interface SkeletonContainerProps {
+  children: React.ReactNode;
+  className?: string;
+  label?: string;
+}
+
+function SkeletonContainer({
+  children,
+  className,
+  label = "読み込み中",
+}: SkeletonContainerProps) {
+  return (
+    <div className={className} aria-busy="true" aria-label={label}>
+      {children}
+    </div>
+  );
+}
+
 export function RepositoryCardSkeleton() {
   return (
     <Card className="p-4">
@@ -43,20 +61,33 @@ export function RepositoryCardSkeleton() {
 
 export function SearchResultsSkeleton() {
   return (
-    <div className="space-y-6" aria-busy="true" aria-label="読み込み中">
+    <SkeletonContainer className="space-y-6">
       <Skeleton className="h-5 w-48" />
       <div className="space-y-4">
         {Array.from({ length: UI.SKELETON_ITEM_COUNT }).map((_, i) => (
           <RepositoryCardSkeleton key={i} />
         ))}
       </div>
-    </div>
+    </SkeletonContainer>
+  );
+}
+
+export function SearchFormSkeleton() {
+  return (
+    <SkeletonContainer
+      className="flex flex-col gap-4 sm:flex-row sm:items-center"
+      label="検索フォームを読み込み中"
+    >
+      <Skeleton className="h-10 flex-1" />
+      <Skeleton className="h-10 w-full sm:w-40" />
+      <Skeleton className="h-10 w-full sm:w-24" />
+    </SkeletonContainer>
   );
 }
 
 export function RepositoryDetailSkeleton() {
   return (
-    <div className="space-y-6" aria-busy="true" aria-label="読み込み中">
+    <SkeletonContainer className="space-y-6">
       <Skeleton className="h-8 w-32" />
       <Card className="p-6">
         <div className="flex items-start gap-4">
@@ -73,6 +104,6 @@ export function RepositoryDetailSkeleton() {
           <Skeleton key={i} className="h-24 rounded-lg" />
         ))}
       </div>
-    </div>
+    </SkeletonContainer>
   );
 }
