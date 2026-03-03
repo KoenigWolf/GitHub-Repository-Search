@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { UI } from "@/lib/constants";
 import { Card } from "@/components/ui/card";
@@ -18,7 +19,7 @@ function Skeleton({ className }: SkeletonProps) {
 }
 
 interface SkeletonContainerProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   label?: string;
   locale?: Locale | undefined;
@@ -30,8 +31,8 @@ function SkeletonContainer({
   label,
   locale = DEFAULT_LOCALE,
 }: SkeletonContainerProps) {
-  const m = getMessages(locale);
-  const resolvedLabel = label ?? m.loading;
+  // Lazy: only call getMessages when label is not provided
+  const resolvedLabel = label ?? getMessages(locale).loading;
   return (
     <div className={className} aria-busy="true" aria-label={resolvedLabel}>
       {children}
