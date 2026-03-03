@@ -72,4 +72,12 @@ describe("RepositoryCard", () => {
     render(<RepositoryCard repository={mockRepository} />);
     expect(screen.getByText("+1")).toBeInTheDocument();
   });
+
+  it("英語ロケールでアバターaltと詳細リンクが正しく設定される", () => {
+    render(<RepositoryCard repository={mockRepository} locale="en-US" />);
+    const img = screen.getByAltText("facebook's avatar");
+    expect(img).toBeInTheDocument();
+    const link = screen.getByRole("link", { name: "facebook/react" });
+    expect(link).toHaveAttribute("href", "/repositories/facebook/react?lang=en");
+  });
 });
