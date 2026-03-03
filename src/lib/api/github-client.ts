@@ -75,8 +75,9 @@ function createHeaders(): HeadersInit {
     "X-GitHub-Api-Version": "2022-11-28",
   };
 
-  if (env.GITHUB_TOKEN) {
-    headers["Authorization"] = `Bearer ${env.GITHUB_TOKEN}`;
+  const token = env.GITHUB_TOKEN?.trim();
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   return headers;
@@ -91,11 +92,12 @@ export const RETRY_CONFIG = {
 
 function isRetryableError(error: unknown): boolean {
   if (error instanceof Error) {
+    const message = error.message.toLowerCase();
     return (
       error.name === "TypeError" ||
-      error.message.includes("network") ||
-      error.message.includes("timeout") ||
-      error.message.includes("ECONNRESET")
+      message.includes("network") ||
+      message.includes("timeout") ||
+      message.includes("econnreset")
     );
   }
   return false;
