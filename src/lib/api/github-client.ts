@@ -169,7 +169,9 @@ async function safeFetch(
   }
 
   const errorDetails = lastError instanceof Error
-    ? { message: lastError.message, stack: lastError.stack }
+    ? isProduction()
+      ? { message: lastError.message }
+      : { message: lastError.message, stack: lastError.stack }
     : lastError;
   return err(createApiError("NETWORK_ERROR", 0, errorDetails));
 }
