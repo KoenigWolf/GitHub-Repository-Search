@@ -3,11 +3,12 @@ import Link from "next/link";
 import { Star, GitFork, AlertCircle, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { IconText } from "@/components/ui/icon-text";
+import { LanguageBadge } from "@/components/ui/language-badge";
+import { StatDisplay } from "@/components/ui/stat-display";
 import { OwnerAvatar } from "@/components/OwnerAvatar";
 import { RepositoryTopics } from "@/components/RepositoryTopics";
 import type { GitHubRepository } from "@/lib/schemas/github";
-import { formatNumber, formatDate } from "@/lib/utils";
-import { LANGUAGE_COLORS, DEFAULT_LANGUAGE_COLOR } from "@/lib/constants";
+import { formatDate } from "@/lib/utils";
 import { DEFAULT_LOCALE, type Locale, toLangParam } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
 
@@ -61,36 +62,31 @@ export const RepositoryCard = memo(function RepositoryCard({
           )}
 
           <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-            {language && (
-              <span className="flex items-center gap-1">
-                <span
-                  className="h-3 w-3 rounded-full"
-                  style={{
-                    backgroundColor: LANGUAGE_COLORS[language] ?? DEFAULT_LANGUAGE_COLOR,
-                  }}
-                  aria-hidden="true"
-                />
-                {language}
-              </span>
-            )}
+            {language && <LanguageBadge language={language} />}
 
-            <IconText icon={Star} title={m.stars}>
-              <span aria-label={`${stargazers_count} ${m.starsSuffix}`}>
-                {formatNumber(stargazers_count, locale)}
-              </span>
-            </IconText>
+            <StatDisplay
+              icon={Star}
+              value={stargazers_count}
+              title={m.stars}
+              suffix={m.starsSuffix}
+              locale={locale}
+            />
 
-            <IconText icon={GitFork} title={m.forks}>
-              <span aria-label={`${forks_count} ${m.forksSuffix}`}>
-                {formatNumber(forks_count, locale)}
-              </span>
-            </IconText>
+            <StatDisplay
+              icon={GitFork}
+              value={forks_count}
+              title={m.forks}
+              suffix={m.forksSuffix}
+              locale={locale}
+            />
 
-            <IconText icon={AlertCircle} title={m.issues}>
-              <span aria-label={`${open_issues_count} ${m.issuesSuffix}`}>
-                {formatNumber(open_issues_count, locale)}
-              </span>
-            </IconText>
+            <StatDisplay
+              icon={AlertCircle}
+              value={open_issues_count}
+              title={m.issues}
+              suffix={m.issuesSuffix}
+              locale={locale}
+            />
 
             <IconText icon={Calendar} title={m.updatedAt}>
               <time dateTime={updated_at}>{formatDate(updated_at, locale)}</time>

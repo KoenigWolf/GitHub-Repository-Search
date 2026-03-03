@@ -1,7 +1,13 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export type ButtonVariant = "default" | "outline" | "ghost" | "secondary";
+export type ButtonVariant =
+  | "default"
+  | "destructive"
+  | "outline"
+  | "secondary"
+  | "ghost"
+  | "link";
 export type ButtonSize = "sm" | "md" | "lg" | "icon";
 
 export interface ButtonProps
@@ -9,6 +15,27 @@ export interface ButtonProps
   variant?: ButtonVariant;
   size?: ButtonSize;
 }
+
+const variantStyles: Record<ButtonVariant, string> = {
+  default:
+    "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
+  destructive:
+    "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80",
+  outline:
+    "border border-input bg-background hover:bg-accent hover:text-accent-foreground active:bg-accent/80",
+  secondary:
+    "bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70",
+  ghost:
+    "hover:bg-accent hover:text-accent-foreground active:bg-accent/80",
+  link: "text-primary underline-offset-4 hover:underline",
+};
+
+const sizeStyles: Record<ButtonSize, string> = {
+  sm: "h-9 px-3 text-xs",
+  md: "h-10 px-4 py-2",
+  lg: "h-11 px-8 text-base",
+  icon: "h-10 w-10",
+};
 
 /**
  * ボタンのスタイルを生成する関数
@@ -25,21 +52,8 @@ export function buttonVariants({
 } = {}): string {
   return cn(
     "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-    {
-      "bg-primary text-primary-foreground hover:bg-primary/90":
-        variant === "default",
-      "border border-input bg-background hover:bg-accent hover:text-accent-foreground":
-        variant === "outline",
-      "hover:bg-accent hover:text-accent-foreground": variant === "ghost",
-      "bg-secondary text-secondary-foreground hover:bg-secondary/80":
-        variant === "secondary",
-    },
-    {
-      "h-9 px-3 text-xs": size === "sm",
-      "h-10 px-4 py-2": size === "md",
-      "h-11 px-8 text-base": size === "lg",
-      "h-10 w-10": size === "icon",
-    },
+    variantStyles[variant],
+    sizeStyles[size],
     className
   );
 }
@@ -48,6 +62,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "default", size = "md", ...props }, ref) => {
     return (
       <button
+        suppressHydrationWarning
         className={buttonVariants({
           variant,
           size,

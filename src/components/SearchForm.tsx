@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Select } from "@/components/ui/select";
 import { GITHUB_API, SORT_VALUES, type SortValue } from "@/lib/constants";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
@@ -54,27 +54,14 @@ export function SearchForm({ locale = DEFAULT_LOCALE }: SearchFormProps) {
       className="flex flex-col gap-4 sm:flex-row sm:items-center"
       suppressHydrationWarning
     >
-      <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="text"
-          placeholder={m.searchPlaceholder}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          maxLength={GITHUB_API.MAX_QUERY_LENGTH}
-          className="pl-10 pr-10"
-        />
-        {query && (
-          <button
-            type="button"
-            onClick={handleClear}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            aria-label={m.clearSearch}
-          >
-            <X className="h-4 w-4" />
-          </button>
-        )}
-      </div>
+      <SearchInput
+        placeholder={m.searchPlaceholder}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onClear={handleClear}
+        clearAriaLabel={m.clearSearch}
+        maxLength={GITHUB_API.MAX_QUERY_LENGTH}
+      />
 
       <Select
         value={sort}
