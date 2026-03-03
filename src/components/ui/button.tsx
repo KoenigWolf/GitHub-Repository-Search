@@ -31,10 +31,10 @@ const variantStyles: Record<ButtonVariant, string> = {
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: "h-9 px-3 text-xs rounded-md",
-  md: "h-10 px-4 py-2 rounded-md",
-  lg: "h-11 px-8 text-base rounded-md",
-  icon: "h-10 w-10 rounded-md",
+  sm: "h-9 px-3 text-xs",
+  md: "h-10 px-4 py-2",
+  lg: "h-11 px-8 text-base",
+  icon: "h-10 w-10",
 };
 
 /**
@@ -51,7 +51,7 @@ export function buttonVariants({
   className?: string;
 } = {}): string {
   return cn(
-    "inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+    "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
     variantStyles[variant],
     sizeStyles[size],
     className

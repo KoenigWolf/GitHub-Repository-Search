@@ -9,23 +9,31 @@ interface SearchInputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
   onClear?: () => void;
   clearAriaLabel?: string;
+  containerClassName?: string;
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   function SearchInput(
-    { value, onClear, clearAriaLabel = "Clear", className, ...props },
+    {
+      value,
+      onClear,
+      clearAriaLabel = "Clear",
+      containerClassName,
+      className,
+      ...props
+    },
     ref
   ) {
     const hasValue = value !== undefined && value !== "";
 
     return (
-      <div className={cn("relative flex-1", className)}>
+      <div className={cn("relative flex-1", containerClassName)}>
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           ref={ref}
           type="text"
           value={value}
-          className="pl-10 pr-10"
+          className={cn("pl-10 pr-10", className)}
           {...props}
         />
         {hasValue && onClear && (
@@ -42,3 +50,4 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     );
   }
 );
+SearchInput.displayName = "SearchInput";

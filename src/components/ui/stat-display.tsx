@@ -8,7 +8,7 @@ interface StatDisplayProps {
   icon: LucideIcon;
   value: number;
   title: string;
-  ariaLabel: string;
+  suffix: string;
   locale?: Locale;
 }
 
@@ -16,12 +16,14 @@ export const StatDisplay = memo(function StatDisplay({
   icon,
   value,
   title,
-  ariaLabel,
+  suffix,
   locale = DEFAULT_LOCALE,
 }: StatDisplayProps) {
   return (
     <IconText icon={icon} title={title}>
-      <span aria-label={ariaLabel}>{formatNumber(value, locale)}</span>
+      <span aria-label={`${value} ${suffix}`}>
+        {formatNumber(value, locale)}
+      </span>
     </IconText>
   );
 });
