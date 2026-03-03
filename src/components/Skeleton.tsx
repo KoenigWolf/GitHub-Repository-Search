@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 import { UI } from "@/lib/constants";
 import { Card } from "@/components/ui/card";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
+import { getMessages } from "@/lib/messages";
 
 interface SkeletonProps {
   className?: string;
@@ -19,15 +21,19 @@ interface SkeletonContainerProps {
   children: React.ReactNode;
   className?: string;
   label?: string;
+  locale?: Locale | undefined;
 }
 
 function SkeletonContainer({
   children,
   className,
-  label = "読み込み中",
+  label,
+  locale = DEFAULT_LOCALE,
 }: SkeletonContainerProps) {
+  const m = getMessages(locale);
+  const resolvedLabel = label ?? m.loading;
   return (
-    <div className={className} aria-busy="true" aria-label={label}>
+    <div className={className} aria-busy="true" aria-label={resolvedLabel}>
       {children}
     </div>
   );
@@ -59,9 +65,13 @@ export function RepositoryCardSkeleton() {
   );
 }
 
-export function SearchResultsSkeleton() {
+interface SkeletonComponentProps {
+  locale?: Locale;
+}
+
+export function SearchResultsSkeleton({ locale }: SkeletonComponentProps = {}) {
   return (
-    <SkeletonContainer className="space-y-6">
+    <SkeletonContainer className="space-y-6" locale={locale}>
       <Skeleton className="h-5 w-48" />
       <div className="space-y-4">
         {Array.from({ length: UI.SKELETON_ITEM_COUNT }).map((_, i) => (
@@ -72,11 +82,13 @@ export function SearchResultsSkeleton() {
   );
 }
 
-export function SearchFormSkeleton() {
+export function SearchFormSkeleton({ locale = DEFAULT_LOCALE }: SkeletonComponentProps = {}) {
+  const m = getMessages(locale);
   return (
     <SkeletonContainer
       className="flex flex-col gap-4 sm:flex-row sm:items-center"
-      label="検索フォームを読み込み中"
+      label={m.loadingSearchForm}
+      locale={locale}
     >
       <Skeleton className="h-10 flex-1" />
       <Skeleton className="h-10 w-full sm:w-40" />
@@ -85,9 +97,9 @@ export function SearchFormSkeleton() {
   );
 }
 
-export function RepositoryDetailSkeleton() {
+export function RepositoryDetailSkeleton({ locale }: SkeletonComponentProps = {}) {
   return (
-    <SkeletonContainer className="space-y-6">
+    <SkeletonContainer className="space-y-6" locale={locale}>
       <Skeleton className="h-8 w-32" />
       <Card className="p-6">
         <div className="flex items-start gap-4">

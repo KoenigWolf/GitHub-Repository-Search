@@ -44,7 +44,7 @@ export function RepositoryCard({
       aria-label={`${full_name} ${m.repositoryAriaSuffix}`}
     >
       <div className="flex items-start gap-3">
-        <OwnerAvatar login={owner.login} avatarUrl={owner.avatar_url} />
+        <OwnerAvatar login={owner.login} avatarUrl={owner.avatar_url} locale={locale} />
         <div className="min-w-0 flex-1">
           <Link
             href={repositoryHref}

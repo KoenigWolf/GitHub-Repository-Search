@@ -102,6 +102,7 @@ async function RepositoryDetail({
             login={repository.owner.login}
             avatarUrl={repository.owner.avatar_url}
             size={64}
+            locale={locale}
           />
           <div className="flex-1 space-y-3">
             <div className="flex flex-wrap items-center gap-2">
@@ -171,7 +172,7 @@ export default async function RepositoryPage({
   const locale = resolveLocale(search.lang);
 
   return (
-    <Suspense fallback={<RepositoryDetailSkeleton />}>
+    <Suspense fallback={<RepositoryDetailSkeleton locale={locale} />}>
       <RepositoryDetail owner={owner} repo={repo} locale={locale} />
     </Suspense>
   );

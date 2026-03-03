@@ -29,7 +29,7 @@ describe("RepositoryCard", () => {
 
   it("アバター画像のsrcとaltを正しく設定する", () => {
     render(<RepositoryCard repository={mockRepository} />);
-    const img = screen.getByAltText("facebook のアバター");
+    const img = screen.getByAltText("facebookのアバター");
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute(
       "src",

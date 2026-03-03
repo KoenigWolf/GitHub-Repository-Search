@@ -1,4 +1,5 @@
 export const APP_NAME = "GitHub Repository Search";
+export const APP_DESCRIPTION = "GitHubリポジトリを検索・閲覧できるWebアプリケーション";
 
 /** @see https://github.com/ozh/github-colors */
 export const LANGUAGE_COLORS: Record<string, string> = {

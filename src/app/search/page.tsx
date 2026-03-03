@@ -109,7 +109,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
   return (
     <div className="space-y-8">
-      <Suspense fallback={<SearchFormSkeleton />}>
+      <Suspense fallback={<SearchFormSkeleton locale={locale} />}>
         <SearchForm locale={locale} />
       </Suspense>
 
@@ -120,7 +120,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           description={m.emptyDescription}
         />
       ) : (
-        <Suspense fallback={<SearchResultsSkeleton />}>
+        <Suspense fallback={<SearchResultsSkeleton locale={locale} />}>
           <SearchResults query={query} sort={sort} page={page} locale={locale} />
         </Suspense>
       )}

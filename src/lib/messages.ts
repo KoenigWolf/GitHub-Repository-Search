@@ -30,6 +30,9 @@ const messages = {
     emptyDescription: "キーワードを入力して、リポジトリを検索してみましょう",
     noResultPrefix: "に一致するリポジトリが見つかりませんでした。",
     openInGitHub: "GitHubで開く",
+    avatarAlt: "のアバター",
+    loading: "読み込み中",
+    loadingSearchForm: "検索フォームを読み込み中",
   },
   "en-US": {
     searchAriaLabel: "Search repositories",
@@ -60,6 +63,9 @@ const messages = {
     emptyDescription: "Enter a keyword to start searching repositories",
     noResultPrefix: "No repositories found matching",
     openInGitHub: "Open on GitHub",
+    avatarAlt: "'s avatar",
+    loading: "Loading",
+    loadingSearchForm: "Loading search form",
   },
 } as const;
 
