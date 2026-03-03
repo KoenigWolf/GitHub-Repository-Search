@@ -1,6 +1,18 @@
 import { SORT_VALUES, type SortValue } from "@/lib/constants";
 
 /**
+ * searchParamsの値を正規化する
+ * - string[]の場合は最初の要素を返す
+ * - undefinedの場合はundefinedを返す
+ */
+export function normalizeParam(value: string | string[] | undefined): string | undefined {
+  if (Array.isArray(value)) {
+    return value[0];
+  }
+  return value;
+}
+
+/**
  * 検索クエリを正規化する
  * - 前後の空白を削除
  * - 連続する空白を1つに

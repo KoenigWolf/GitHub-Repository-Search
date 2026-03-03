@@ -28,10 +28,13 @@ import { APP_NAME } from "@/lib/constants";
 import { resolveLocale, toLangParam, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
 import { formatDate } from "@/lib/utils";
+import { normalizeParam } from "@/lib/validators";
+
+type SearchParamValue = string | string[] | undefined;
 
 interface RepositoryPageProps {
   params: Promise<{ owner: string; repo: string }>;
-  searchParams: Promise<{ lang?: string }>;
+  searchParams: Promise<Record<string, SearchParamValue>>;
 }
 
 export async function generateMetadata({
@@ -169,7 +172,7 @@ export default async function RepositoryPage({
 }: RepositoryPageProps) {
   const { owner, repo } = await params;
   const search = await searchParams;
-  const locale = resolveLocale(search.lang);
+  const locale = resolveLocale(normalizeParam(search.lang));
 
   return (
     <Suspense fallback={<RepositoryDetailSkeleton locale={locale} />}>

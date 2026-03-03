@@ -11,24 +11,35 @@ import { APP_NAME, GITHUB_API, type SortValue } from "@/lib/constants";
 import { resolveLocale, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
 import {
+  normalizeParam,
   normalizeQuery,
   normalizePageNumber,
   normalizeSortParam,
 } from "@/lib/validators";
 
+type SearchParamValue = string | string[] | undefined;
+
 interface SearchPageProps {
-  searchParams: Promise<{ q?: string; sort?: string; page?: string; lang?: string }>;
+  searchParams: Promise<Record<string, SearchParamValue>>;
 }
 
 export async function generateMetadata({
   searchParams,
 }: SearchPageProps): Promise<Metadata> {
   const params = await searchParams;
-  const query = normalizeQuery(params.q ?? "");
+  const query = normalizeQuery(normalizeParam(params.q) ?? "");
+  const locale = resolveLocale(normalizeParam(params.lang));
+  const m = getMessages(locale);
 
   if (query) {
-    const title = `"${query}" の検索結果`;
-    const description = `GitHub で "${query}" に関連するリポジトリを検索`;
+    const title =
+      locale === "en-US"
+        ? `Search results for "${query}"`
+        : `"${query}" ${m.searchResultSummary}`;
+    const description =
+      locale === "en-US"
+        ? `Search GitHub repositories related to "${query}"`
+        : `GitHub で "${query}" に関連するリポジトリを検索`;
 
     return {
       title,
@@ -101,11 +112,11 @@ async function SearchResults({
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
-  const locale = resolveLocale(params.lang);
+  const locale = resolveLocale(normalizeParam(params.lang));
   const m = getMessages(locale);
-  const query = normalizeQuery(params.q ?? "");
-  const sort = normalizeSortParam(params.sort);
-  const page = normalizePageNumber(params.page ?? "1");
+  const query = normalizeQuery(normalizeParam(params.q) ?? "");
+  const sort = normalizeSortParam(normalizeParam(params.sort));
+  const page = normalizePageNumber(normalizeParam(params.page) ?? "1");
 
   return (
     <div className="space-y-8">
