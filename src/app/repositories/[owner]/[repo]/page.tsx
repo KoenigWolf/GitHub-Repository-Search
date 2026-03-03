@@ -98,7 +98,7 @@ async function RepositoryDetail({
   ];
 
   const fallbackHref =
-    returnTo && returnTo.startsWith("/search")
+    returnTo && (returnTo === "/search" || returnTo.startsWith("/search?"))
       ? returnTo
       : lang === "en"
         ? "/search?lang=en"

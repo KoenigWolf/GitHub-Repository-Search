@@ -16,7 +16,6 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
   const [locale, setLocale] = useState<Locale>(DEFAULT_LOCALE);
 
   useEffect(() => {
-    // Get locale from URL in client side
     const params = new URLSearchParams(window.location.search);
     setLocale(resolveLocale(params.get("lang")));
   }, []);
