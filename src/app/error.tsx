@@ -16,10 +16,7 @@ export default function Error({ error, reset }: ErrorProps) {
   }, [error]);
 
   return (
-    <div
-      role="alert"
-      className="flex min-h-[400px] items-center justify-center"
-    >
+    <div className="flex min-h-[400px] items-center justify-center">
       <ErrorPanel
         title="エラーが発生しました"
         message={error.message || "予期しないエラーが発生しました。"}
