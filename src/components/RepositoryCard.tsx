@@ -1,18 +1,26 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Star, GitFork, AlertCircle, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { IconText } from "@/components/ui/icon-text";
+import { OwnerAvatar } from "@/components/OwnerAvatar";
 import { RepositoryTopics } from "@/components/RepositoryTopics";
 import type { GitHubRepository } from "@/lib/schemas/github";
 import { formatNumber, formatDate } from "@/lib/utils";
 import { LANGUAGE_COLORS, DEFAULT_LANGUAGE_COLOR } from "@/lib/constants";
+import type { Locale } from "@/lib/locale";
+import { getMessages } from "@/lib/messages";
+import { toLangParam } from "@/lib/locale";
 
 interface RepositoryCardProps {
   repository: GitHubRepository;
+  locale?: Locale;
 }
 
-export function RepositoryCard({ repository }: RepositoryCardProps) {
+export function RepositoryCard({
+  repository,
+  locale = "ja-JP",
+}: RepositoryCardProps) {
+  const m = getMessages(locale);
   const {
     full_name,
     description,
@@ -24,20 +32,23 @@ export function RepositoryCard({ repository }: RepositoryCardProps) {
     updated_at,
     topics,
   } = repository;
+  const lang = toLangParam(locale);
+  const repositoryHref = `/repositories/${owner.login}/${repository.name}${
+    lang === "en" ? "?lang=en" : ""
+  }`;
 
   return (
-    <Card as="article" hover className="p-4" aria-label={`${full_name} リポジトリ`}>
+    <Card
+      as="article"
+      hover
+      className="p-4"
+      aria-label={`${full_name} ${m.repositoryAriaSuffix}`}
+    >
       <div className="flex items-start gap-3">
-        <Image
-          src={owner.avatar_url}
-          alt={`${owner.login} のアバター`}
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
+        <OwnerAvatar login={owner.login} avatarUrl={owner.avatar_url} />
         <div className="min-w-0 flex-1">
           <Link
-            href={`/repositories/${owner.login}/${repository.name}`}
+            href={repositoryHref}
             className="text-lg font-semibold text-primary hover:underline"
           >
             {full_name}
@@ -63,26 +74,26 @@ export function RepositoryCard({ repository }: RepositoryCardProps) {
               </span>
             )}
 
-            <IconText icon={Star} title="スター数">
-              <span aria-label={`${stargazers_count} スター`}>
-                {formatNumber(stargazers_count)}
+            <IconText icon={Star} title={m.stars}>
+              <span aria-label={`${stargazers_count} ${m.starsSuffix}`}>
+                {formatNumber(stargazers_count, locale)}
               </span>
             </IconText>
 
-            <IconText icon={GitFork} title="フォーク数">
-              <span aria-label={`${forks_count} フォーク`}>
-                {formatNumber(forks_count)}
+            <IconText icon={GitFork} title={m.forks}>
+              <span aria-label={`${forks_count} ${m.forksSuffix}`}>
+                {formatNumber(forks_count, locale)}
               </span>
             </IconText>
 
-            <IconText icon={AlertCircle} title="Issue数">
-              <span aria-label={`${open_issues_count} イシュー`}>
-                {formatNumber(open_issues_count)}
+            <IconText icon={AlertCircle} title={m.issues}>
+              <span aria-label={`${open_issues_count} ${m.issuesSuffix}`}>
+                {formatNumber(open_issues_count, locale)}
               </span>
             </IconText>
 
-            <IconText icon={Calendar} title="更新日">
-              <time dateTime={updated_at}>{formatDate(updated_at)}</time>
+            <IconText icon={Calendar} title={m.updatedAt}>
+              <time dateTime={updated_at}>{formatDate(updated_at, locale)}</time>
             </IconText>
           </div>
 

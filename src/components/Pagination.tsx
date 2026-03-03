@@ -1,28 +1,33 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { calculatePageNumbers } from "@/lib/pagination";
+import { useSearchNavigation } from "@/hooks/useSearchNavigation";
+import type { Locale } from "@/lib/locale";
+import { getMessages } from "@/lib/messages";
 
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
+  locale?: Locale;
 }
 
-export function Pagination({ currentPage, totalPages }: PaginationProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+export function Pagination({
+  currentPage,
+  totalPages,
+  locale = "ja-JP",
+}: PaginationProps) {
+  const { navigate } = useSearchNavigation();
+  const m = getMessages(locale);
 
   const navigateToPage = useCallback(
     (page: number) => {
       const target = Math.max(1, Math.min(page, totalPages));
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("page", String(target));
-      router.push(`/search?${params.toString()}`);
+      navigate({ page: target }, true);
     },
-    [router, searchParams, totalPages]
+    [navigate, totalPages]
   );
 
   const pageNumbers = useMemo(
@@ -35,13 +40,13 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
   }
 
   return (
-    <nav aria-label="ページネーション" className="flex items-center justify-center gap-1">
+    <nav aria-label={m.pagination} className="flex items-center justify-center gap-1">
       <Button
         variant="outline"
         size="icon"
         onClick={() => navigateToPage(currentPage - 1)}
         disabled={currentPage <= 1}
-        aria-label="前のページ"
+        aria-label={m.prevPage}
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
@@ -62,7 +67,7 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
             size="icon"
             onClick={() => navigateToPage(page)}
             aria-current={page === currentPage ? "page" : undefined}
-            aria-label={`ページ ${page}`}
+            aria-label={`${m.pageLabel} ${page}`}
           >
             {page}
           </Button>
@@ -74,7 +79,7 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
         size="icon"
         onClick={() => navigateToPage(currentPage + 1)}
         disabled={currentPage >= totalPages}
-        aria-label="次のページ"
+        aria-label={m.nextPage}
       >
         <ChevronRight className="h-4 w-4" />
       </Button>
