@@ -13,6 +13,7 @@ interface RepositoryListProps {
   totalPages: number;
   query: string;
   locale?: Locale;
+  returnTo?: string;
 }
 
 export function RepositoryList({
@@ -22,6 +23,7 @@ export function RepositoryList({
   totalPages,
   query,
   locale = DEFAULT_LOCALE,
+  returnTo,
 }: RepositoryListProps) {
   const m = getMessages(locale);
 
@@ -42,7 +44,11 @@ export function RepositoryList({
       <ul className="space-y-4" role="list">
         {repositories.map((repo) => (
           <li key={repo.id}>
-            <RepositoryCard repository={repo} locale={locale} />
+            <RepositoryCard
+              repository={repo}
+              locale={locale}
+              {...(returnTo !== undefined && { returnTo })}
+            />
           </li>
         ))}
       </ul>

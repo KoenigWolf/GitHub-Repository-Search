@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn, formInputBase } from "@/lib/utils";
 
-export interface InputProps
+interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: boolean;
 }

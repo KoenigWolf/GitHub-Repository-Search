@@ -31,7 +31,6 @@ function SkeletonContainer({
   label,
   locale = DEFAULT_LOCALE,
 }: SkeletonContainerProps) {
-  // Lazy: only call getMessages when label is not provided
   const resolvedLabel = label ?? getMessages(locale).loading;
   return (
     <div className={className} aria-busy="true" aria-label={resolvedLabel}>
@@ -40,7 +39,7 @@ function SkeletonContainer({
   );
 }
 
-export function RepositoryCardSkeleton() {
+function RepositoryCardSkeleton() {
   return (
     <Card className="p-4">
       <div className="flex items-start gap-3">

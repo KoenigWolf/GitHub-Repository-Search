@@ -12,9 +12,6 @@ interface BackButtonProps {
   locale?: Locale;
 }
 
-/**
- * 同じオリジンからの遷移かどうかをチェックする
- */
 function canGoBack(): boolean {
   if (typeof window === "undefined") {
     return false;

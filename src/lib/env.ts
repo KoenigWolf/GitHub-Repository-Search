@@ -18,7 +18,6 @@ function parseEnv(): EnvType {
     throw new Error("Invalid environment variables");
   }
 
-  // Only cache in production to allow test overrides
   if (process.env.NODE_ENV === "production") {
     cachedEnv = result.data;
   }
@@ -41,12 +40,4 @@ export function hasGitHubToken(): boolean {
 
 export function isProduction(): boolean {
   return env.NODE_ENV === "production";
-}
-
-export function isDevelopment(): boolean {
-  return env.NODE_ENV === "development";
-}
-
-export function isTest(): boolean {
-  return env.NODE_ENV === "test";
 }

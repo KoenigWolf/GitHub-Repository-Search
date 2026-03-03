@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { GITHUB_API, SORT_VALUES } from "@/lib/constants";
 
-export const GitHubOwnerSchema = z.object({
+const GitHubOwnerSchema = z.object({
   login: z.string(),
   avatar_url: z.string().url(),
   html_url: z.string().url(),
@@ -31,7 +31,6 @@ export const GitHubSearchResponseSchema = z.object({
   items: z.array(GitHubRepositorySchema),
 });
 
-export type GitHubOwner = z.infer<typeof GitHubOwnerSchema>;
 export type GitHubRepository = z.infer<typeof GitHubRepositorySchema>;
 export type GitHubSearchResponse = z.infer<typeof GitHubSearchResponseSchema>;
 
@@ -48,11 +47,9 @@ export const SearchParamsSchema = z.object({
 
 export type SearchParamsInput = z.input<typeof SearchParamsSchema>;
 
-export const SearchResultSchema = z.object({
-  repositories: z.array(GitHubRepositorySchema),
-  totalCount: z.number(),
-  currentPage: z.number(),
-  totalPages: z.number(),
-});
-
-export type SearchResult = z.infer<typeof SearchResultSchema>;
+export interface SearchResult {
+  repositories: GitHubRepository[];
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+}

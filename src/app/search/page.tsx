@@ -8,7 +8,7 @@ import { ErrorPanel } from "@/components/ErrorPanel";
 import { EmptyState } from "@/components/EmptyState";
 import { searchRepositories } from "@/lib/api/github-client";
 import { APP_NAME, GITHUB_API, type SortValue } from "@/lib/constants";
-import { resolveLocale, type Locale } from "@/lib/locale";
+import { resolveLocale, toLangParam, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
 import {
   normalizeParam,
@@ -96,8 +96,34 @@ async function SearchResults({
       totalPages={data.totalPages}
       query={query}
       locale={locale}
+      returnTo={buildSearchPath({ query, sort, page, locale })}
     />
   );
+}
+
+function buildSearchPath({
+  query,
+  sort,
+  page,
+  locale,
+}: {
+  query: string;
+  sort: SortValue;
+  page: number;
+  locale: Locale;
+}): string {
+  const params = new URLSearchParams();
+  params.set("q", query);
+  if (sort !== "best-match") {
+    params.set("sort", sort);
+  }
+  if (page > 1) {
+    params.set("page", String(page));
+  }
+  if (toLangParam(locale) === "en") {
+    params.set("lang", "en");
+  }
+  return `/search?${params.toString()}`;
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
