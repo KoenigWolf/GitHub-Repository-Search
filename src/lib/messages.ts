@@ -33,6 +33,7 @@ const messages = {
     avatarAlt: "のアバター",
     loading: "読み込み中",
     loadingSearchForm: "検索フォームを読み込み中",
+    errorIdLabel: "エラーID:",
   },
   "en-US": {
     searchAriaLabel: "Search repositories",
@@ -66,6 +67,7 @@ const messages = {
     avatarAlt: "'s avatar",
     loading: "Loading",
     loadingSearchForm: "Loading search form",
+    errorIdLabel: "Error ID:",
   },
 } as const;
 

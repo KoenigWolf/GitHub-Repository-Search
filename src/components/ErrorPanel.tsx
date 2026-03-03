@@ -58,7 +58,7 @@ export function ErrorPanel({
           </p>
           {digest && (
             <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-              Error ID: {digest}
+              {m.errorIdLabel} {digest}
             </p>
           )}
         </div>
