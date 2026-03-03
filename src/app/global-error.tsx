@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ErrorPanel } from "@/components/ErrorPanel";
+import { resolveLocale, type Locale, DEFAULT_LOCALE } from "@/lib/locale";
+import { getMessages } from "@/lib/messages";
 
 interface GlobalErrorProps {
   error: Error & { digest?: string };
@@ -11,22 +13,33 @@ interface GlobalErrorProps {
 }
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
+  const [locale, setLocale] = useState<Locale>(DEFAULT_LOCALE);
+
+  useEffect(() => {
+    // Get locale from URL in client side
+    const params = new URLSearchParams(window.location.search);
+    setLocale(resolveLocale(params.get("lang")));
+  }, []);
+
   useEffect(() => {
     console.error("Global error:", error);
   }, [error]);
 
+  const m = getMessages(locale);
+
   return (
-    <html lang="ja">
+    <html lang={locale === "en-US" ? "en" : "ja"}>
       <body className="min-h-screen bg-background">
         <div className="flex min-h-screen items-center justify-center p-4">
           <ErrorPanel
-            title="重大なエラーが発生しました"
-            message="アプリケーションで予期しないエラーが発生しました。時間をおいて再度お試しください。"
+            title={m.criticalErrorTitle}
+            message={m.criticalErrorMessage}
             digest={error.digest}
+            locale={locale}
           >
             <Button onClick={reset} className="mt-6" variant="outline">
               <RotateCcw className="mr-2 h-4 w-4" />
-              再試行
+              {m.retry}
             </Button>
           </ErrorPanel>
         </div>
