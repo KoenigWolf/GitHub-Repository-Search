@@ -5,25 +5,33 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 });
 
-function getEnvValue<K extends keyof z.infer<typeof envSchema>>(
-  key: K
-): z.infer<typeof envSchema>[K] {
-  const parsed = envSchema.safeParse(process.env);
+type EnvType = z.infer<typeof envSchema>;
 
-  if (!parsed.success) {
-    console.error("Invalid environment variables:", parsed.error.flatten().fieldErrors);
+let cachedEnv: EnvType | null = null;
+
+function parseEnv(): EnvType {
+  if (cachedEnv) return cachedEnv;
+
+  const result = envSchema.safeParse(process.env);
+  if (!result.success) {
+    console.error("Invalid environment variables:", result.error.flatten().fieldErrors);
     throw new Error("Invalid environment variables");
   }
 
-  return parsed.data[key];
+  // Only cache in production to allow test overrides
+  if (process.env.NODE_ENV === "production") {
+    cachedEnv = result.data;
+  }
+
+  return result.data;
 }
 
-export const env = {
+export const env: EnvType = {
   get GITHUB_TOKEN() {
-    return getEnvValue("GITHUB_TOKEN");
+    return parseEnv().GITHUB_TOKEN;
   },
   get NODE_ENV() {
-    return getEnvValue("NODE_ENV");
+    return parseEnv().NODE_ENV;
   },
 };
 
