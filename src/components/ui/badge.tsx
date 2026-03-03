@@ -19,7 +19,7 @@ const variantStyles: Record<BadgeVariant, string> = {
   outline: "border border-input bg-background text-foreground",
   destructive: "bg-destructive/10 text-destructive",
   success: "bg-success/10 text-success",
-  warning: "bg-warning/10 text-warning-foreground",
+  warning: "bg-warning/10 text-warning",
 };
 
 const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
