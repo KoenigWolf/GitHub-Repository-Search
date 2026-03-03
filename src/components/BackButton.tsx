@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Locale } from "@/lib/locale";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
 
 interface BackButtonProps {
@@ -36,7 +36,7 @@ function canGoBack(): boolean {
 export function BackButton({
   fallbackHref = "/search",
   children,
-  locale = "ja-JP",
+  locale = DEFAULT_LOCALE,
 }: BackButtonProps) {
   const router = useRouter();
   const m = getMessages(locale);

@@ -1,6 +1,6 @@
 import { AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Locale } from "@/lib/locale";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
 
 interface ErrorPanelProps {
@@ -18,7 +18,7 @@ export function ErrorPanel({
   digest,
   variant = "centered",
   children,
-  locale = "ja-JP",
+  locale = DEFAULT_LOCALE,
 }: ErrorPanelProps) {
   const m = getMessages(locale);
   const resolvedTitle = title ?? m.genericErrorTitle;

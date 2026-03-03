@@ -3,7 +3,7 @@ import { Pagination } from "@/components/Pagination";
 import type { GitHubRepository } from "@/lib/schemas/github";
 import { formatNumber } from "@/lib/utils";
 import { GITHUB_API } from "@/lib/constants";
-import type { Locale } from "@/lib/locale";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
 
 interface RepositoryListProps {
@@ -21,7 +21,7 @@ export function RepositoryList({
   currentPage,
   totalPages,
   query,
-  locale = "ja-JP",
+  locale = DEFAULT_LOCALE,
 }: RepositoryListProps) {
   const m = getMessages(locale);
 

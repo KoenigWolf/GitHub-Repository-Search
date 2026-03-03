@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { calculatePageNumbers } from "@/lib/pagination";
 import { useSearchNavigation } from "@/hooks/useSearchNavigation";
-import type { Locale } from "@/lib/locale";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
 
 interface PaginationProps {
@@ -17,7 +17,7 @@ interface PaginationProps {
 export function Pagination({
   currentPage,
   totalPages,
-  locale = "ja-JP",
+  locale = DEFAULT_LOCALE,
 }: PaginationProps) {
   const { navigate } = useSearchNavigation();
   const m = getMessages(locale);

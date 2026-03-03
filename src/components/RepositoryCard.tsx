@@ -7,9 +7,8 @@ import { RepositoryTopics } from "@/components/RepositoryTopics";
 import type { GitHubRepository } from "@/lib/schemas/github";
 import { formatNumber, formatDate } from "@/lib/utils";
 import { LANGUAGE_COLORS, DEFAULT_LANGUAGE_COLOR } from "@/lib/constants";
-import type { Locale } from "@/lib/locale";
+import { DEFAULT_LOCALE, type Locale, toLangParam } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
-import { toLangParam } from "@/lib/locale";
 
 interface RepositoryCardProps {
   repository: GitHubRepository;
@@ -18,7 +17,7 @@ interface RepositoryCardProps {
 
 export function RepositoryCard({
   repository,
-  locale = "ja-JP",
+  locale = DEFAULT_LOCALE,
 }: RepositoryCardProps) {
   const m = getMessages(locale);
   const {

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { SORT_OPTIONS, type SortValue } from "@/lib/constants";
-import type { Locale } from "@/lib/locale";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
 import { normalizeSortParam } from "@/lib/validators";
 import { useSearchNavigation } from "@/hooks/useSearchNavigation";
@@ -15,7 +15,7 @@ interface SearchFormProps {
   locale?: Locale;
 }
 
-export function SearchForm({ locale = "ja-JP" }: SearchFormProps) {
+export function SearchForm({ locale = DEFAULT_LOCALE }: SearchFormProps) {
   const { navigate, getParam } = useSearchNavigation();
   const m = getMessages(locale);
 

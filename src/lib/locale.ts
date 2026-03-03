@@ -55,7 +55,3 @@ export function resolveLocale(value?: string | null): Locale {
 export function toLangParam(locale: Locale): "ja" | "en" {
   return locale === "en-US" ? "en" : "ja";
 }
-
-export function toHtmlLang(locale: Locale): "ja" | "en" {
-  return locale === "en-US" ? "en" : "ja";
-}
