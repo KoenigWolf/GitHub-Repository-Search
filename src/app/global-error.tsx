@@ -21,10 +21,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
         <div className="flex min-h-screen items-center justify-center p-4">
           <ErrorPanel
             title="重大なエラーが発生しました"
-            message={
-              error.message ||
-              "アプリケーションで予期しないエラーが発生しました。"
-            }
+            message="アプリケーションで予期しないエラーが発生しました。時間をおいて再度お試しください。"
             digest={error.digest}
           >
             <Button onClick={reset} className="mt-6" variant="outline">

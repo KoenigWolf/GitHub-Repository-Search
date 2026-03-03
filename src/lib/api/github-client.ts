@@ -3,6 +3,7 @@ import { type Result, ok, err } from "@/lib/result";
 import {
   GitHubRepositorySchema,
   GitHubSearchResponseSchema,
+  SearchParamsSchema,
   type GitHubRepository,
   type SearchParamsInput,
   type SearchResult,
@@ -88,12 +89,14 @@ export const RETRY_CONFIG = {
   baseDelayMs: 1000,
   maxDelayMs: 10000,
   totalTimeoutMs: 30000,
+  requestTimeoutMs: 10000,
 } as const;
 
 function isRetryableError(error: unknown): boolean {
   if (error instanceof Error) {
     const message = error.message.toLowerCase();
     return (
+      error.name === "AbortError" ||
       error.name === "TypeError" ||
       message.includes("network") ||
       message.includes("timeout") ||
@@ -130,7 +133,12 @@ async function safeFetch(
     }
 
     try {
-      const response = await fetch(url, options);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), RETRY_CONFIG.requestTimeoutMs);
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeoutId));
 
       if (isRetryableStatus(response.status) && attempt < RETRY_CONFIG.maxRetries - 1) {
         const backoff = calculateBackoff(attempt);
@@ -206,15 +214,8 @@ async function handleApiResponse<T>(
 export async function searchRepositories(
   params: SearchParamsInput
 ): Promise<Result<SearchResult, GitHubApiError>> {
-  const {
-    query,
-    sort = "best-match",
-    order = "desc",
-    page = 1,
-    per_page = GITHUB_API.DEFAULT_PER_PAGE,
-  } = params;
-
-  if (!query.trim()) {
+  const normalizedQuery = params.query.trim();
+  if (!normalizedQuery) {
     return ok({
       repositories: [],
       totalCount: 0,
@@ -222,6 +223,23 @@ export async function searchRepositories(
       totalPages: 0,
     });
   }
+
+  const parsedParams = SearchParamsSchema.safeParse({
+    ...params,
+    query: normalizedQuery,
+  });
+
+  if (!parsedParams.success) {
+    return err(createApiError("INVALID_QUERY", 422, parsedParams.error.issues));
+  }
+
+  const {
+    query,
+    sort = "best-match",
+    order = "desc",
+    page = 1,
+    per_page = GITHUB_API.DEFAULT_PER_PAGE,
+  } = parsedParams.data;
 
   const url = new URL(`${GITHUB_API.BASE_URL}${GITHUB_API.SEARCH_REPOS_ENDPOINT}`);
   url.searchParams.set("q", query);
@@ -273,4 +291,3 @@ export async function getRepository(
 
   return handleApiResponse(fetchResult, GitHubRepositorySchema);
 }
-

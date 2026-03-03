@@ -1,4 +1,4 @@
-import { SORT_VALUES, type SortValue } from "@/lib/constants";
+import { GITHUB_API, SORT_VALUES, type SortValue } from "@/lib/constants";
 
 /**
  * searchParamsの値を正規化する
@@ -18,7 +18,10 @@ export function normalizeParam(value: string | string[] | undefined): string | u
  * - 連続する空白を1つに
  */
 export function normalizeQuery(query: string): string {
-  return query.trim().replace(/\s+/g, " ");
+  return query
+    .trim()
+    .replace(/\s+/g, " ")
+    .slice(0, GITHUB_API.MAX_QUERY_LENGTH);
 }
 
 /**

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { searchRepositories, getRepository } from "@/lib/api/github-client";
+import { GITHUB_API } from "@/lib/constants";
 import { mockRepository, mockSearchResponse } from "./fixtures";
 
 const mockFetch = vi.fn();
@@ -135,6 +136,19 @@ describe("searchRepositories", () => {
     if (!result.success) {
       expect(result.error.code).toBe("INVALID_QUERY");
       expect(result.error.message).toBe("検索クエリが無効です。");
+    }
+  });
+
+  it("クエリが上限を超える場合はINVALID_QUERYを返す", async () => {
+    const tooLongQuery = "a".repeat(GITHUB_API.MAX_QUERY_LENGTH + 1);
+
+    const result = await searchRepositories({ query: tooLongQuery });
+
+    expect(mockFetch).not.toHaveBeenCalled();
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe("INVALID_QUERY");
+      expect(result.error.status).toBe(422);
     }
   });
 

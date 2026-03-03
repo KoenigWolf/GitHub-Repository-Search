@@ -19,7 +19,7 @@ export default function Error({ error, reset }: ErrorProps) {
     <div className="flex min-h-[400px] items-center justify-center">
       <ErrorPanel
         title="エラーが発生しました"
-        message={error.message || "予期しないエラーが発生しました。"}
+        message="予期しないエラーが発生しました。時間をおいて再度お試しください。"
         digest={error.digest}
       >
         <Button onClick={reset} className="mt-6" variant="outline">

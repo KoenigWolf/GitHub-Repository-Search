@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SORT_VALUES } from "@/lib/constants";
+import { GITHUB_API, SORT_VALUES } from "@/lib/constants";
 
 export const GitHubOwnerSchema = z.object({
   login: z.string(),
@@ -36,7 +36,10 @@ export type GitHubRepository = z.infer<typeof GitHubRepositorySchema>;
 export type GitHubSearchResponse = z.infer<typeof GitHubSearchResponseSchema>;
 
 export const SearchParamsSchema = z.object({
-  query: z.string().min(1, "検索クエリは必須です"),
+  query: z
+    .string()
+    .min(1, "検索クエリは必須です")
+    .max(GITHUB_API.MAX_QUERY_LENGTH, "検索クエリが長すぎます"),
   sort: z.enum(SORT_VALUES).default("best-match"),
   order: z.enum(["asc", "desc"]).default("desc"),
   page: z.number().int().positive().default(1),
