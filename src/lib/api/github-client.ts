@@ -8,6 +8,7 @@ import {
   type SearchResult,
 } from "@/lib/schemas/github";
 import { GITHUB_API } from "@/lib/constants";
+import { env, hasGitHubToken, isProduction } from "@/lib/env";
 
 export type GitHubApiErrorCode =
   | "NETWORK_ERROR"
@@ -49,6 +50,7 @@ function createApiError(
 function getErrorCodeFromStatus(status: number): GitHubApiErrorCode {
   switch (status) {
     case 403:
+    case 429:
       return "RATE_LIMIT";
     case 404:
       return "NOT_FOUND";
@@ -60,7 +62,7 @@ function getErrorCodeFromStatus(status: number): GitHubApiErrorCode {
 }
 
 if (typeof window === "undefined") {
-  if (process.env.NODE_ENV === "production" && !process.env.GITHUB_TOKEN) {
+  if (isProduction() && !hasGitHubToken()) {
     console.warn(
       "[GitHub API] GITHUB_TOKEN が設定されていません。レート制限 (60 req/h) が適用されます。"
     );
@@ -73,26 +75,77 @@ function createHeaders(): HeadersInit {
     "X-GitHub-Api-Version": "2022-11-28",
   };
 
-  if (process.env.GITHUB_TOKEN) {
-    headers["Authorization"] = `Bearer ${process.env.GITHUB_TOKEN}`;
+  if (env.GITHUB_TOKEN) {
+    headers["Authorization"] = `Bearer ${env.GITHUB_TOKEN}`;
   }
 
   return headers;
+}
+
+const RETRY_CONFIG = {
+  maxRetries: 3,
+  baseDelayMs: 1000,
+  maxDelayMs: 10000,
+} as const;
+
+function isRetryableError(error: unknown): boolean {
+  if (error instanceof Error) {
+    return (
+      error.name === "TypeError" ||
+      error.message.includes("network") ||
+      error.message.includes("timeout") ||
+      error.message.includes("ECONNRESET")
+    );
+  }
+  return false;
+}
+
+function isRetryableStatus(status: number): boolean {
+  return status === 429 || status === 503 || status === 502 || status === 504;
+}
+
+async function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function calculateBackoff(attempt: number): number {
+  const exponentialDelay = RETRY_CONFIG.baseDelayMs * Math.pow(2, attempt);
+  const jitter = Math.random() * 100;
+  return Math.min(exponentialDelay + jitter, RETRY_CONFIG.maxDelayMs);
 }
 
 async function safeFetch(
   url: string,
   options: RequestInit
 ): Promise<Result<Response, GitHubApiError>> {
-  try {
-    const response = await fetch(url, options);
-    return ok(response);
-  } catch (error) {
-    const errorDetails = error instanceof Error
-      ? { message: error.message, stack: error.stack }
-      : error;
-    return err(createApiError("NETWORK_ERROR", 0, errorDetails));
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt < RETRY_CONFIG.maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, options);
+
+      if (isRetryableStatus(response.status) && attempt < RETRY_CONFIG.maxRetries - 1) {
+        await delay(calculateBackoff(attempt));
+        continue;
+      }
+
+      return ok(response);
+    } catch (error) {
+      lastError = error;
+
+      if (isRetryableError(error) && attempt < RETRY_CONFIG.maxRetries - 1) {
+        await delay(calculateBackoff(attempt));
+        continue;
+      }
+
+      break;
+    }
   }
+
+  const errorDetails = lastError instanceof Error
+    ? { message: lastError.message, stack: lastError.stack }
+    : lastError;
+  return err(createApiError("NETWORK_ERROR", 0, errorDetails));
 }
 
 async function validateResponse<T>(
@@ -113,6 +166,23 @@ async function validateResponse<T>(
   } catch {
     return err(createApiError("VALIDATION_ERROR", response.status));
   }
+}
+
+async function handleApiResponse<T>(
+  fetchResult: Result<Response, GitHubApiError>,
+  schema: z.ZodType<T>
+): Promise<Result<T, GitHubApiError>> {
+  if (!fetchResult.success) {
+    return fetchResult;
+  }
+
+  const response = fetchResult.data;
+
+  if (!response.ok) {
+    return err(createApiError(getErrorCodeFromStatus(response.status), response.status));
+  }
+
+  return validateResponse(response, schema);
 }
 
 export async function searchRepositories(
@@ -150,20 +220,7 @@ export async function searchRepositories(
     next: { revalidate: GITHUB_API.CACHE_SEARCH },
   });
 
-  if (!fetchResult.success) {
-    return fetchResult;
-  }
-
-  const response = fetchResult.data;
-
-  if (!response.ok) {
-    return err(createApiError(getErrorCodeFromStatus(response.status), response.status));
-  }
-
-  const validationResult = await validateResponse(
-    response,
-    GitHubSearchResponseSchema
-  );
+  const validationResult = await handleApiResponse(fetchResult, GitHubSearchResponseSchema);
 
   if (!validationResult.success) {
     return validationResult;
@@ -186,23 +243,16 @@ export async function getRepository(
   owner: string,
   repo: string
 ): Promise<Result<GitHubRepository, GitHubApiError>> {
-  const url = `${GITHUB_API.BASE_URL}${GITHUB_API.REPOS_ENDPOINT}/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`;
+  const url = new URL(
+    `${GITHUB_API.REPOS_ENDPOINT}/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`,
+    GITHUB_API.BASE_URL
+  );
 
-  const fetchResult = await safeFetch(url, {
+  const fetchResult = await safeFetch(url.toString(), {
     headers: createHeaders(),
     next: { revalidate: GITHUB_API.CACHE_REPO },
   });
 
-  if (!fetchResult.success) {
-    return fetchResult;
-  }
-
-  const response = fetchResult.data;
-
-  if (!response.ok) {
-    return err(createApiError(getErrorCodeFromStatus(response.status), response.status));
-  }
-
-  return validateResponse(response, GitHubRepositorySchema);
+  return handleApiResponse(fetchResult, GitHubRepositorySchema);
 }
 
