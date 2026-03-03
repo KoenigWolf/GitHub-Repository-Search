@@ -21,12 +21,12 @@ export function SearchForm({ locale = DEFAULT_LOCALE }: SearchFormProps) {
 
   const [query, setQuery] = useState(getParam("q") ?? "");
   const [sort, setSort] = useState<SortValue>(
-    normalizeSortParam(getParam("sort") ?? undefined)
+    normalizeSortParam(getParam("sort"))
   );
 
   useEffect(() => {
     setQuery(getParam("q") ?? "");
-    setSort(normalizeSortParam(getParam("sort") ?? undefined));
+    setSort(normalizeSortParam(getParam("sort")));
   }, [searchParams, getParam]);
 
   const trimmedQuery = useMemo(() => query.trim(), [query]);

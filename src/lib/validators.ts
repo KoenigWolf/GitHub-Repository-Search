@@ -22,7 +22,7 @@ export function normalizePageNumber(pageStr: string): number {
   return parsed;
 }
 
-export function normalizeSortParam(value: string | undefined): SortValue {
+export function normalizeSortParam(value: string | null | undefined): SortValue {
   if (value && SORT_VALUES.includes(value as SortValue)) {
     return value as SortValue;
   }
