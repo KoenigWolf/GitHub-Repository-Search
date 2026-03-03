@@ -58,6 +58,7 @@ export const GITHUB_API = {
   SEARCH_REPOS_ENDPOINT: "/search/repositories",
   REPOS_ENDPOINT: "/repos",
   MAX_SEARCH_RESULTS: 1000,
+  MAX_QUERY_LENGTH: 256,
   DEFAULT_PER_PAGE: 30,
   CACHE_SEARCH: 60,
   CACHE_REPO: 300,
@@ -70,13 +71,6 @@ export const UI = {
   PAGINATION_DELTA: 1,
 } as const;
 
-export const SORT_OPTIONS = [
-  { value: "best-match", label: "ベストマッチ" },
-  { value: "stars", label: "スター数" },
-  { value: "forks", label: "フォーク数" },
-  { value: "updated", label: "更新日" },
-] as const;
+export const SORT_VALUES = ["best-match", "stars", "forks", "updated"] as const;
 
-export type SortValue = (typeof SORT_OPTIONS)[number]["value"];
-
-export const SORT_VALUES = SORT_OPTIONS.map((opt) => opt.value) as [SortValue, ...SortValue[]];
+export type SortValue = (typeof SORT_VALUES)[number];

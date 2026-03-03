@@ -5,7 +5,7 @@ import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { SORT_OPTIONS, type SortValue } from "@/lib/constants";
+import { GITHUB_API, SORT_VALUES, type SortValue } from "@/lib/constants";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
 import { normalizeSortParam } from "@/lib/validators";
@@ -61,6 +61,7 @@ export function SearchForm({ locale = DEFAULT_LOCALE }: SearchFormProps) {
           placeholder={m.searchPlaceholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          maxLength={GITHUB_API.MAX_QUERY_LENGTH}
           className="pl-10 pr-10"
         />
         {query && (
@@ -81,9 +82,15 @@ export function SearchForm({ locale = DEFAULT_LOCALE }: SearchFormProps) {
         className="w-full sm:w-40"
         aria-label={m.sortAriaLabel}
       >
-        {SORT_OPTIONS.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
+        {SORT_VALUES.map((value) => (
+          <option key={value} value={value}>
+            {value === "best-match"
+              ? m.sortBestMatch
+              : value === "stars"
+                ? m.stars
+                : value === "forks"
+                  ? m.forks
+                  : m.updatedAt}
           </option>
         ))}
       </Select>

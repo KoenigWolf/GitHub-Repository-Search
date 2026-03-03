@@ -32,14 +32,8 @@ export async function generateMetadata({
   const m = getMessages(locale);
 
   if (query) {
-    const title =
-      locale === "en-US"
-        ? `Search results for "${query}"`
-        : `"${query}" ${m.searchResultSummary}`;
-    const description =
-      locale === "en-US"
-        ? `Search GitHub repositories related to "${query}"`
-        : `GitHub で "${query}" に関連するリポジトリを検索`;
+    const title = m.searchResultsTitle.replace("{query}", query);
+    const description = m.searchResultsDescription.replace("{query}", query);
 
     return {
       title,
@@ -87,13 +81,9 @@ async function SearchResults({
   const { data } = result;
 
   if (data.repositories.length === 0) {
-    const noResultMessage =
-      locale === "en-US"
-        ? `${m.noResultPrefix} "${query}".`
-        : `「${query}」${m.noResultPrefix}`;
     return (
       <div className="text-center text-muted-foreground">
-        <p>{noResultMessage}</p>
+        <p>{m.noResultMessage.replace("{query}", query)}</p>
       </div>
     );
   }
