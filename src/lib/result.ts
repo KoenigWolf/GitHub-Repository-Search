@@ -17,11 +17,3 @@ export function ok<T>(data: T): Success<T> {
 export function err<E>(error: E): Failure<E> {
   return { success: false, error };
 }
-
-export function isSuccess<T, E>(result: Result<T, E>): result is Success<T> {
-  return result.success;
-}
-
-export function isFailure<T, E>(result: Result<T, E>): result is Failure<E> {
-  return !result.success;
-}

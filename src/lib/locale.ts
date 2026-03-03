@@ -24,19 +24,8 @@ export const LOCALE_CONFIG = {
   },
 } as const;
 
-let currentLocale: Locale = DEFAULT_LOCALE;
-
-export function setLocale(locale: Locale): void {
-  currentLocale = locale;
-}
-
-export function getLocale(): Locale {
-  return currentLocale;
-}
-
-export function getLocaleConfig(locale?: Locale) {
-  const targetLocale = locale ?? currentLocale;
-  return LOCALE_CONFIG[targetLocale];
+export function getLocaleConfig(locale: Locale = DEFAULT_LOCALE) {
+  return LOCALE_CONFIG[locale];
 }
 
 export function resolveLocale(value?: string | null): Locale {
