@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import "@testing-library/jest-dom";
 import { expect, vi } from "vitest";
 import * as matchers from "vitest-axe/matchers";
@@ -17,7 +18,7 @@ vi.mock("next/link", () => ({
     ...props
   }: {
     href: string;
-    children: React.ReactNode;
+    children: ReactNode;
   }) => (
     <a href={href} {...props}>
       {children}

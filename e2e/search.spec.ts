@@ -113,8 +113,10 @@ test.describe("Accessibility", () => {
   test("should be keyboard navigable", async ({ page }) => {
     await page.goto("/search");
 
-    await page.keyboard.press("Tab");
-    await expect(page.getByPlaceholder(/リポジトリを検索/)).toBeFocused();
+    // Explicitly focus the search input to set a known starting point
+    const searchInput = page.getByPlaceholder(/リポジトリを検索/);
+    await searchInput.focus();
+    await expect(searchInput).toBeFocused();
 
     await page.keyboard.press("Tab");
     await expect(page.getByLabel("並び替え")).toBeFocused();

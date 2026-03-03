@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { axe } from "vitest-axe";
@@ -16,57 +17,38 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
+async function assertNoA11yViolations(element: ReactElement) {
+  const { container } = render(element);
+  const results = await axe(container);
+  expect(results).toHaveNoViolations();
+}
+
 describe("Accessibility Tests", () => {
-  describe("SearchForm", () => {
-    it("should have no accessibility violations", async () => {
-      const { container } = render(<SearchForm />);
-      const results = await axe(container);
-      expect(results).toHaveNoViolations();
-    });
+  it("SearchForm should have no accessibility violations", async () => {
+    await assertNoA11yViolations(<SearchForm />);
   });
 
-  describe("RepositoryCard", () => {
-    it("should have no accessibility violations", async () => {
-      const { container } = render(<RepositoryCard repository={mockRepository} />);
-      const results = await axe(container);
-      expect(results).toHaveNoViolations();
-    });
+  it("RepositoryCard should have no accessibility violations", async () => {
+    await assertNoA11yViolations(<RepositoryCard repository={mockRepository} />);
   });
 
-  describe("ErrorPanel", () => {
-    it("should have no accessibility violations", async () => {
-      const { container } = render(
-        <ErrorPanel message="Test error message" title="Error" variant="inline" />
-      );
-      const results = await axe(container);
-      expect(results).toHaveNoViolations();
-    });
+  it("ErrorPanel should have no accessibility violations", async () => {
+    await assertNoA11yViolations(
+      <ErrorPanel message="Test error message" title="Error" variant="inline" />
+    );
   });
 
-  describe("EmptyState", () => {
-    it("should have no accessibility violations", async () => {
-      const { container } = render(
-        <EmptyState
-          icon={Github}
-          title="No results"
-          description="Try a different search"
-        />
-      );
-      const results = await axe(container);
-      expect(results).toHaveNoViolations();
-    });
+  it("EmptyState should have no accessibility violations", async () => {
+    await assertNoA11yViolations(
+      <EmptyState
+        icon={Github}
+        title="No results"
+        description="Try a different search"
+      />
+    );
   });
 
-  describe("Pagination", () => {
-    it("should have no accessibility violations", async () => {
-      const { container } = render(
-        <Pagination
-          currentPage={1}
-          totalPages={10}
-        />
-      );
-      const results = await axe(container);
-      expect(results).toHaveNoViolations();
-    });
+  it("Pagination should have no accessibility violations", async () => {
+    await assertNoA11yViolations(<Pagination currentPage={1} totalPages={10} />);
   });
 });
