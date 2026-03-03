@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -9,7 +10,7 @@ interface IconTextProps {
   iconClassName?: string;
 }
 
-export function IconText({
+export const IconText = memo(function IconText({
   icon: Icon,
   children,
   title,
@@ -22,4 +23,4 @@ export function IconText({
       {children}
     </span>
   );
-}
+});

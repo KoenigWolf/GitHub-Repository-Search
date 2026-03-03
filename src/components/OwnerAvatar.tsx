@@ -1,3 +1,4 @@
+import { memo } from "react";
 import Image from "next/image";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
@@ -9,7 +10,7 @@ interface OwnerAvatarProps {
   locale?: Locale;
 }
 
-export function OwnerAvatar({
+export const OwnerAvatar = memo(function OwnerAvatar({
   login,
   avatarUrl,
   size = 40,
@@ -25,4 +26,4 @@ export function OwnerAvatar({
       className="rounded-full"
     />
   );
-}
+});
