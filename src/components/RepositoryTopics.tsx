@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { UI } from "@/lib/constants";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
@@ -10,7 +11,7 @@ interface RepositoryTopicsProps {
   locale?: Locale | undefined;
 }
 
-export function RepositoryTopics({
+export const RepositoryTopics = memo(function RepositoryTopics({
   topics,
   maxDisplay = UI.MAX_TOPICS_DISPLAY,
   showTitle = false,
@@ -39,4 +40,4 @@ export function RepositoryTopics({
       </div>
     </div>
   );
-}
+});

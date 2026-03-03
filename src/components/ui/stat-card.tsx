@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { cn, formatNumber } from "@/lib/utils";
@@ -11,7 +12,7 @@ interface StatCardProps {
   locale?: Locale;
 }
 
-export function StatCard({
+export const StatCard = memo(function StatCard({
   icon: Icon,
   value,
   label,
@@ -27,4 +28,4 @@ export function StatCard({
       </div>
     </Card>
   );
-}
+});

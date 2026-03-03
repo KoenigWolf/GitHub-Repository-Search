@@ -1,3 +1,4 @@
+import { memo } from "react";
 import Link from "next/link";
 import { Star, GitFork, AlertCircle, Calendar } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -15,7 +16,7 @@ interface RepositoryCardProps {
   locale?: Locale;
 }
 
-export function RepositoryCard({
+export const RepositoryCard = memo(function RepositoryCard({
   repository,
   locale = DEFAULT_LOCALE,
 }: RepositoryCardProps) {
@@ -105,4 +106,4 @@ export function RepositoryCard({
       </div>
     </Card>
   );
-}
+});
