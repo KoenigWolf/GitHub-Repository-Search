@@ -16,10 +16,6 @@ interface ErrorProps {
 function ErrorView({ error, reset, locale }: ErrorProps & { locale: Locale }) {
   const m = getMessages(locale);
 
-  useEffect(() => {
-    console.error("Application error:", error);
-  }, [error]);
-
   return (
     <div className="flex min-h-[400px] items-center justify-center">
       <ErrorPanel
@@ -40,6 +36,11 @@ function ErrorView({ error, reset, locale }: ErrorProps & { locale: Locale }) {
 function ErrorContent({ error, reset }: ErrorProps) {
   const searchParams = useSearchParams();
   const locale = resolveLocale(searchParams.get("lang"));
+
+  useEffect(() => {
+    console.error("Application error:", error);
+  }, [error]);
+
   return <ErrorView error={error} reset={reset} locale={locale} />;
 }
 
