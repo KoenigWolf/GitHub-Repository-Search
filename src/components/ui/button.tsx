@@ -1,16 +1,16 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export type ButtonVariant =
+type ButtonVariant =
   | "default"
   | "destructive"
   | "outline"
   | "secondary"
   | "ghost"
   | "link";
-export type ButtonSize = "sm" | "md" | "lg" | "icon";
+type ButtonSize = "sm" | "md" | "lg" | "icon";
 
-export interface ButtonProps
+interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
@@ -37,10 +37,6 @@ const sizeStyles: Record<ButtonSize, string> = {
   icon: "h-10 w-10",
 };
 
-/**
- * ボタンのスタイルを生成する関数
- * Button コンポーネント以外（<a> タグなど）でも同じスタイルを適用できる
- */
 export function buttonVariants({
   variant = "default",
   size = "md",

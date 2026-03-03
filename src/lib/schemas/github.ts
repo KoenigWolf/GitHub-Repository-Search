@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { GITHUB_API, SORT_VALUES } from "@/lib/constants";
 
-export const GitHubOwnerSchema = z.object({
+const GitHubOwnerSchema = z.object({
   login: z.string(),
   avatar_url: z.string().url(),
   html_url: z.string().url(),
@@ -31,7 +31,6 @@ export const GitHubSearchResponseSchema = z.object({
   items: z.array(GitHubRepositorySchema),
 });
 
-export type GitHubOwner = z.infer<typeof GitHubOwnerSchema>;
 export type GitHubRepository = z.infer<typeof GitHubRepositorySchema>;
 export type GitHubSearchResponse = z.infer<typeof GitHubSearchResponseSchema>;
 

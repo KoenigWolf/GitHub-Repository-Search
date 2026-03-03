@@ -18,7 +18,6 @@ function parseEnv(): EnvType {
     throw new Error("Invalid environment variables");
   }
 
-  // Only cache in production to allow test overrides
   if (process.env.NODE_ENV === "production") {
     cachedEnv = result.data;
   }

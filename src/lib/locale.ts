@@ -13,7 +13,7 @@ const DEFAULT_NUMBER_FORMAT = {
   compactDisplay: "short",
 } as const;
 
-export const LOCALE_CONFIG = {
+const LOCALE_CONFIG = {
   "ja-JP": {
     dateFormat: DEFAULT_DATE_FORMAT,
     numberFormat: DEFAULT_NUMBER_FORMAT,

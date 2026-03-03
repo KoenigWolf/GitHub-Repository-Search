@@ -11,7 +11,7 @@ import {
 import { GITHUB_API } from "@/lib/constants";
 import { env, hasGitHubToken, isProduction } from "@/lib/env";
 
-export type GitHubApiErrorCode =
+type GitHubApiErrorCode =
   | "NETWORK_ERROR"
   | "RATE_LIMIT"
   | "INVALID_QUERY"
@@ -19,7 +19,7 @@ export type GitHubApiErrorCode =
   | "VALIDATION_ERROR"
   | "UNKNOWN_ERROR";
 
-export interface GitHubApiError {
+interface GitHubApiError {
   code: GitHubApiErrorCode;
   message: string;
   status: number;
@@ -84,7 +84,7 @@ function createHeaders(): HeadersInit {
   return headers;
 }
 
-export const RETRY_CONFIG = {
+const RETRY_CONFIG = {
   maxRetries: 3,
   baseDelayMs: 1000,
   maxDelayMs: 10000,

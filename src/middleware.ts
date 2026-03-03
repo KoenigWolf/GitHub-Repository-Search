@@ -5,8 +5,6 @@ const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 120;
 const CLEANUP_INTERVAL_REQUESTS = 100;
 
-// In-memory fallback for local/single-instance usage.
-// Use Redis or another distributed store for production multi-instance deployments.
 const requestLog = new Map<string, number[]>();
 let requestCount = 0;
 

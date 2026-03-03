@@ -24,7 +24,6 @@ export function SearchForm({ locale = DEFAULT_LOCALE }: SearchFormProps) {
     normalizeSortParam(getParam("sort") ?? undefined)
   );
 
-  // Sync state with URL changes (browser back/forward, manual URL edits)
   useEffect(() => {
     setQuery(getParam("q") ?? "");
     setSort(normalizeSortParam(getParam("sort") ?? undefined));
