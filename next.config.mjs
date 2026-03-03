@@ -2,8 +2,9 @@ const isDev = process.env.NODE_ENV !== "production";
 
 const cspDirectives = [
   "default-src 'self'",
-  `script-src 'self'${isDev ? " 'unsafe-inline' 'unsafe-eval'" : ""}`,
-  `style-src 'self'${isDev ? " 'unsafe-inline'" : ""}`,
+  // Next.js requires 'unsafe-inline' for inline scripts/styles
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https://avatars.githubusercontent.com",
   "font-src 'self' data:",
   `connect-src 'self' https://api.github.com${isDev ? " ws: wss:" : ""}`,
