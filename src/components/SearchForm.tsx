@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,13 +16,19 @@ interface SearchFormProps {
 }
 
 export function SearchForm({ locale = DEFAULT_LOCALE }: SearchFormProps) {
-  const { navigate, getParam } = useSearchNavigation();
+  const { navigate, getParam, searchParams } = useSearchNavigation();
   const m = getMessages(locale);
 
   const [query, setQuery] = useState(getParam("q") ?? "");
   const [sort, setSort] = useState<SortValue>(
     normalizeSortParam(getParam("sort") ?? undefined)
   );
+
+  // Sync state with URL changes (browser back/forward, manual URL edits)
+  useEffect(() => {
+    setQuery(getParam("q") ?? "");
+    setSort(normalizeSortParam(getParam("sort") ?? undefined));
+  }, [searchParams, getParam]);
 
   const trimmedQuery = useMemo(() => query.trim(), [query]);
 
