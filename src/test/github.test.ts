@@ -138,6 +138,21 @@ describe("searchRepositories", () => {
     }
   });
 
+  it("429エラーの場合はRATE_LIMITエラーを返す（リトライ後）", async () => {
+    mockFetch
+      .mockResolvedValueOnce({ ok: false, status: 429 })
+      .mockResolvedValueOnce({ ok: false, status: 429 })
+      .mockResolvedValueOnce({ ok: false, status: 429 });
+
+    const result = await searchRepositories({ query: "react" });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe("RATE_LIMIT");
+      expect(result.error.status).toBe(429);
+    }
+  });
+
   it("GITHUB_TOKENが設定されている場合はAuthorizationヘッダーに含まれる", async () => {
     process.env.GITHUB_TOKEN = "test-token";
     mockFetch.mockResolvedValueOnce({

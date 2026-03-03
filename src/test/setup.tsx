@@ -3,8 +3,6 @@ import { expect, vi } from "vitest";
 import * as matchers from "vitest-axe/matchers";
 
 expect.extend(matchers);
-
-// Common mocks for Next.js components
 vi.mock("next/image", () => ({
   default: ({ src, alt }: { src: string; alt: string }) => (
     // eslint-disable-next-line @next/next/no-img-element

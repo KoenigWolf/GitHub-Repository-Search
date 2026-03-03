@@ -82,7 +82,7 @@ function createHeaders(): HeadersInit {
   return headers;
 }
 
-const RETRY_CONFIG = {
+export const RETRY_CONFIG = {
   maxRetries: 3,
   baseDelayMs: 1000,
   maxDelayMs: 10000,
