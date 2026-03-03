@@ -21,10 +21,17 @@ export function formatNumber(num: number, locale?: Locale): string {
   return num.toLocaleString(targetLocale);
 }
 
+const dateFormatterCache = new Map<string, Intl.DateTimeFormat>();
+
 export function formatDate(dateString: string, locale?: Locale): string {
   const targetLocale = locale ?? getLocale();
   const config = getLocaleConfig(targetLocale);
-  const date = new Date(dateString);
 
-  return new Intl.DateTimeFormat(targetLocale, config.dateFormat).format(date);
+  let formatter = dateFormatterCache.get(targetLocale);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(targetLocale, config.dateFormat);
+    dateFormatterCache.set(targetLocale, formatter);
+  }
+
+  return formatter.format(new Date(dateString));
 }
