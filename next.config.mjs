@@ -2,11 +2,11 @@ const isDev = process.env.NODE_ENV !== "production";
 
 const cspDirectives = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
-  "style-src 'self' 'unsafe-inline'",
+  `script-src 'self'${isDev ? " 'unsafe-inline' 'unsafe-eval'" : ""}`,
+  `style-src 'self'${isDev ? " 'unsafe-inline'" : ""}`,
   "img-src 'self' data: https://avatars.githubusercontent.com",
   "font-src 'self' data:",
-  "connect-src 'self' https://api.github.com",
+  `connect-src 'self' https://api.github.com${isDev ? " ws: wss:" : ""}`,
   "object-src 'none'",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -40,6 +40,13 @@ const securityHeaders = [
     value: "same-origin",
   },
 ];
+
+if (!isDev) {
+  securityHeaders.push({
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
+  });
+}
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
