@@ -15,11 +15,13 @@ import { getMessages } from "@/lib/messages";
 interface RepositoryCardProps {
   repository: GitHubRepository;
   locale?: Locale;
+  returnTo?: string;
 }
 
 export const RepositoryCard = memo(function RepositoryCard({
   repository,
   locale = DEFAULT_LOCALE,
+  returnTo,
 }: RepositoryCardProps) {
   const m = getMessages(locale);
   const {
@@ -34,8 +36,16 @@ export const RepositoryCard = memo(function RepositoryCard({
     topics,
   } = repository;
   const lang = toLangParam(locale);
+  const queryParams = new URLSearchParams();
+  if (lang === "en") {
+    queryParams.set("lang", "en");
+  }
+  if (returnTo) {
+    queryParams.set("returnTo", returnTo);
+  }
+  const queryString = queryParams.toString();
   const repositoryHref = `/repositories/${owner.login}/${repository.name}${
-    lang === "en" ? "?lang=en" : ""
+    queryString ? `?${queryString}` : ""
   }`;
 
   return (

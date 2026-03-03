@@ -50,10 +50,12 @@ async function RepositoryDetail({
   owner,
   repo,
   locale,
+  returnTo,
 }: {
   owner: string;
   repo: string;
   locale: Locale;
+  returnTo?: string;
 }) {
   const m = getMessages(locale);
   const lang = toLangParam(locale);
@@ -95,9 +97,16 @@ async function RepositoryDetail({
     },
   ];
 
+  const fallbackHref =
+    returnTo && returnTo.startsWith("/search")
+      ? returnTo
+      : lang === "en"
+        ? "/search?lang=en"
+        : "/search";
+
   return (
     <div className="space-y-6">
-      <BackButton fallbackHref={lang === "en" ? "/search?lang=en" : "/search"} locale={locale} />
+      <BackButton fallbackHref={fallbackHref} locale={locale} />
 
       <Card className="p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
@@ -174,10 +183,16 @@ export default async function RepositoryPage({
   const { owner, repo } = await params;
   const search = await searchParams;
   const locale = resolveLocale(normalizeParam(search.lang));
+  const returnTo = normalizeParam(search.returnTo);
 
   return (
     <Suspense fallback={<RepositoryDetailSkeleton locale={locale} />}>
-      <RepositoryDetail owner={owner} repo={repo} locale={locale} />
+      <RepositoryDetail
+        owner={owner}
+        repo={repo}
+        locale={locale}
+        {...(returnTo !== undefined && { returnTo })}
+      />
     </Suspense>
   );
 }
