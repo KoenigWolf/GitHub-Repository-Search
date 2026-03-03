@@ -72,28 +72,28 @@ async function RepositoryDetail({
     {
       icon: Star,
       value: repository.stargazers_count,
-      label: "Stars",
+      label: m.stars,
       iconClassName: "text-yellow-500",
     },
     {
       icon: Eye,
       value: repository.watchers_count,
-      label: "Watchers",
+      label: m.watchers,
       iconClassName: "text-blue-500",
     },
     {
       icon: GitFork,
       value: repository.forks_count,
-      label: "Forks",
+      label: m.forks,
       iconClassName: "text-green-500",
     },
     {
       icon: AlertCircle,
       value: repository.open_issues_count,
-      label: "Open Issues",
+      label: m.openIssues,
       iconClassName: "text-orange-500",
     },
-  ] as const;
+  ];
 
   return (
     <div className="space-y-6">
@@ -116,7 +116,7 @@ async function RepositoryDetail({
                 ) : (
                   <Lock className="mr-1 h-3 w-3" />
                 )}
-                {repository.visibility}
+                {repository.visibility === "public" ? m.visibilityPublic : m.visibilityPrivate}
               </Badge>
             </div>
 
@@ -161,6 +161,7 @@ async function RepositoryDetail({
         topics={repository.topics}
         maxDisplay={Infinity}
         showTitle
+        locale={locale}
       />
     </div>
   );
