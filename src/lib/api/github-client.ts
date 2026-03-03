@@ -86,6 +86,7 @@ export const RETRY_CONFIG = {
   maxRetries: 3,
   baseDelayMs: 1000,
   maxDelayMs: 10000,
+  totalTimeoutMs: 30000,
 } as const;
 
 function isRetryableError(error: unknown): boolean {
@@ -118,14 +119,24 @@ async function safeFetch(
   url: string,
   options: RequestInit
 ): Promise<Result<Response, GitHubApiError>> {
+  const deadline = Date.now() + RETRY_CONFIG.totalTimeoutMs;
   let lastError: unknown;
 
   for (let attempt = 0; attempt < RETRY_CONFIG.maxRetries; attempt++) {
+    if (Date.now() >= deadline) {
+      return err(createApiError("NETWORK_ERROR", 0, { message: "Total timeout exceeded" }));
+    }
+
     try {
       const response = await fetch(url, options);
 
       if (isRetryableStatus(response.status) && attempt < RETRY_CONFIG.maxRetries - 1) {
-        await delay(calculateBackoff(attempt));
+        const backoff = calculateBackoff(attempt);
+        const remainingTime = deadline - Date.now();
+        if (remainingTime <= 0) {
+          return err(createApiError("NETWORK_ERROR", 0, { message: "Total timeout exceeded" }));
+        }
+        await delay(Math.min(backoff, remainingTime));
         continue;
       }
 
@@ -134,7 +145,12 @@ async function safeFetch(
       lastError = error;
 
       if (isRetryableError(error) && attempt < RETRY_CONFIG.maxRetries - 1) {
-        await delay(calculateBackoff(attempt));
+        const backoff = calculateBackoff(attempt);
+        const remainingTime = deadline - Date.now();
+        if (remainingTime <= 0) {
+          return err(createApiError("NETWORK_ERROR", 0, { message: "Total timeout exceeded" }));
+        }
+        await delay(Math.min(backoff, remainingTime));
         continue;
       }
 
