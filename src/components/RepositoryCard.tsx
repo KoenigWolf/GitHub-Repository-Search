@@ -68,7 +68,7 @@ export const RepositoryCard = memo(function RepositoryCard({
               icon={Star}
               value={stargazers_count}
               title={m.stars}
-              ariaLabel={`${stargazers_count} ${m.starsSuffix}`}
+              suffix={m.starsSuffix}
               locale={locale}
             />
 
@@ -76,7 +76,7 @@ export const RepositoryCard = memo(function RepositoryCard({
               icon={GitFork}
               value={forks_count}
               title={m.forks}
-              ariaLabel={`${forks_count} ${m.forksSuffix}`}
+              suffix={m.forksSuffix}
               locale={locale}
             />
 
@@ -84,7 +84,7 @@ export const RepositoryCard = memo(function RepositoryCard({
               icon={AlertCircle}
               value={open_issues_count}
               title={m.issues}
-              ariaLabel={`${open_issues_count} ${m.issuesSuffix}`}
+              suffix={m.issuesSuffix}
               locale={locale}
             />
 
