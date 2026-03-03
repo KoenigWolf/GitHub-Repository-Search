@@ -3,30 +3,56 @@ import type { Metadata } from "next";
 import { Github } from "lucide-react";
 import { SearchForm } from "@/components/SearchForm";
 import { RepositoryList } from "@/components/RepositoryList";
-import { SearchResultsSkeleton } from "@/components/Skeleton";
-import { ErrorDisplay } from "@/components/ErrorDisplay";
+import { SearchResultsSkeleton, SearchFormSkeleton } from "@/components/Skeleton";
+import { ErrorPanel } from "@/components/ErrorPanel";
 import { EmptyState } from "@/components/EmptyState";
 import { searchRepositories } from "@/lib/api/github-client";
 import { APP_NAME, GITHUB_API, type SortValue } from "@/lib/constants";
+import { resolveLocale, type Locale } from "@/lib/locale";
+import { getMessages } from "@/lib/messages";
 import {
+  normalizeParam,
   normalizeQuery,
   normalizePageNumber,
   normalizeSortParam,
 } from "@/lib/validators";
 
+type SearchParamValue = string | string[] | undefined;
+
 interface SearchPageProps {
-  searchParams: Promise<{ q?: string; sort?: string; page?: string }>;
+  searchParams: Promise<Record<string, SearchParamValue>>;
 }
 
 export async function generateMetadata({
   searchParams,
 }: SearchPageProps): Promise<Metadata> {
   const params = await searchParams;
-  const query = normalizeQuery(params.q ?? "");
+  const query = normalizeQuery(normalizeParam(params.q) ?? "");
+  const locale = resolveLocale(normalizeParam(params.lang));
+  const m = getMessages(locale);
 
   if (query) {
+    const title =
+      locale === "en-US"
+        ? `Search results for "${query}"`
+        : `"${query}" ${m.searchResultSummary}`;
+    const description =
+      locale === "en-US"
+        ? `Search GitHub repositories related to "${query}"`
+        : `GitHub で "${query}" に関連するリポジトリを検索`;
+
     return {
-      title: `"${query}" の検索結果 - ${APP_NAME}`,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+      },
+      twitter: {
+        card: "summary",
+        title,
+        description,
+      },
     };
   }
 
@@ -39,11 +65,14 @@ async function SearchResults({
   query,
   sort,
   page,
+  locale,
 }: {
   query: string;
   sort: SortValue;
   page: number;
+  locale: Locale;
 }) {
+  const m = getMessages(locale);
   const result = await searchRepositories({
     query,
     sort,
@@ -52,15 +81,19 @@ async function SearchResults({
   });
 
   if (!result.success) {
-    return <ErrorDisplay message={result.error.message} />;
+    return <ErrorPanel message={result.error.message} variant="inline" locale={locale} />;
   }
 
   const { data } = result;
 
   if (data.repositories.length === 0) {
+    const noResultMessage =
+      locale === "en-US"
+        ? `${m.noResultPrefix} "${query}".`
+        : `「${query}」${m.noResultPrefix}`;
     return (
       <div className="text-center text-muted-foreground">
-        <p>&ldquo;{query}&rdquo; に一致するリポジトリが見つかりませんでした。</p>
+        <p>{noResultMessage}</p>
       </div>
     );
   }
@@ -72,31 +105,34 @@ async function SearchResults({
       currentPage={data.currentPage}
       totalPages={data.totalPages}
       query={query}
+      locale={locale}
     />
   );
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
-  const query = normalizeQuery(params.q ?? "");
-  const sort = normalizeSortParam(params.sort);
-  const page = normalizePageNumber(params.page ?? "1");
+  const locale = resolveLocale(normalizeParam(params.lang));
+  const m = getMessages(locale);
+  const query = normalizeQuery(normalizeParam(params.q) ?? "");
+  const sort = normalizeSortParam(normalizeParam(params.sort));
+  const page = normalizePageNumber(normalizeParam(params.page) ?? "1");
 
   return (
     <div className="space-y-8">
-      <Suspense fallback={null}>
-        <SearchForm />
+      <Suspense fallback={<SearchFormSkeleton locale={locale} />}>
+        <SearchForm locale={locale} />
       </Suspense>
 
       {!query ? (
         <EmptyState
           icon={Github}
-          title="GitHubリポジトリを検索"
-          description="キーワードを入力して、リポジトリを検索してみましょう"
+          title={m.emptyTitle}
+          description={m.emptyDescription}
         />
       ) : (
-        <Suspense fallback={<SearchResultsSkeleton />}>
-          <SearchResults query={query} sort={sort} page={page} />
+        <Suspense fallback={<SearchResultsSkeleton locale={locale} />}>
+          <SearchResults query={query} sort={sort} page={page} locale={locale} />
         </Suspense>
       )}
     </div>

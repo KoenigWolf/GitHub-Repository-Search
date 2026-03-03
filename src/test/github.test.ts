@@ -138,6 +138,21 @@ describe("searchRepositories", () => {
     }
   });
 
+  it("429エラーの場合はRATE_LIMITエラーを返す（リトライ後）", async () => {
+    mockFetch
+      .mockResolvedValueOnce({ ok: false, status: 429 })
+      .mockResolvedValueOnce({ ok: false, status: 429 })
+      .mockResolvedValueOnce({ ok: false, status: 429 });
+
+    const result = await searchRepositories({ query: "react" });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe("RATE_LIMIT");
+      expect(result.error.status).toBe(429);
+    }
+  });
+
   it("GITHUB_TOKENが設定されている場合はAuthorizationヘッダーに含まれる", async () => {
     process.env.GITHUB_TOKEN = "test-token";
     mockFetch.mockResolvedValueOnce({
@@ -165,6 +180,64 @@ describe("searchRepositories", () => {
         "ネットワークエラーが発生しました。インターネット接続を確認してください。"
       );
       expect(result.error.status).toBe(0);
+    }
+  });
+
+  it("429エラーの場合はリトライして成功する", async () => {
+    mockFetch
+      .mockResolvedValueOnce({ ok: false, status: 429 })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockSearchResponse),
+      });
+
+    const result = await searchRepositories({ query: "react" });
+
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(result.success).toBe(true);
+  });
+
+  it("503エラーの場合はリトライして成功する", async () => {
+    mockFetch
+      .mockResolvedValueOnce({ ok: false, status: 503 })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockSearchResponse),
+      });
+
+    const result = await searchRepositories({ query: "react" });
+
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(result.success).toBe(true);
+  });
+
+  it("リトライ可能なネットワークエラーの場合はリトライする", async () => {
+    const networkError = new TypeError("Failed to fetch");
+    mockFetch
+      .mockRejectedValueOnce(networkError)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockSearchResponse),
+      });
+
+    const result = await searchRepositories({ query: "react" });
+
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(result.success).toBe(true);
+  });
+
+  it("最大リトライ回数に達した場合はエラーを返す", async () => {
+    mockFetch
+      .mockResolvedValueOnce({ ok: false, status: 429 })
+      .mockResolvedValueOnce({ ok: false, status: 429 })
+      .mockResolvedValueOnce({ ok: false, status: 429 });
+
+    const result = await searchRepositories({ query: "react" });
+
+    expect(mockFetch).toHaveBeenCalledTimes(3);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.code).toBe("RATE_LIMIT");
     }
   });
 });

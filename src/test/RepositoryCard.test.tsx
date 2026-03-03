@@ -1,29 +1,8 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { RepositoryCard } from "@/components/RepositoryCard";
 import { mockRepository } from "./fixtures";
 import type { GitHubRepository } from "@/lib/schemas/github";
-
-vi.mock("next/image", () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => (
-    <img src={src} alt={alt} />
-  ),
-}));
-
-vi.mock("next/link", () => ({
-  default: ({
-    href,
-    children,
-    ...props
-  }: {
-    href: string;
-    children: React.ReactNode;
-  }) => (
-    <a href={href} {...props}>
-      {children}
-    </a>
-  ),
-}));
 
 describe("RepositoryCard", () => {
   it("リポジトリ名を表示する", () => {
@@ -50,7 +29,7 @@ describe("RepositoryCard", () => {
 
   it("アバター画像のsrcとaltを正しく設定する", () => {
     render(<RepositoryCard repository={mockRepository} />);
-    const img = screen.getByAltText("facebook のアバター");
+    const img = screen.getByAltText("facebookのアバター");
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute(
       "src",
@@ -92,5 +71,13 @@ describe("RepositoryCard", () => {
   it("トピック5件超で+Nバッジを表示する", () => {
     render(<RepositoryCard repository={mockRepository} />);
     expect(screen.getByText("+1")).toBeInTheDocument();
+  });
+
+  it("英語ロケールでアバターaltと詳細リンクが正しく設定される", () => {
+    render(<RepositoryCard repository={mockRepository} locale="en-US" />);
+    const img = screen.getByAltText("facebook's avatar");
+    expect(img).toBeInTheDocument();
+    const link = screen.getByRole("link", { name: "facebook/react" });
+    expect(link).toHaveAttribute("href", "/repositories/facebook/react?lang=en");
   });
 });

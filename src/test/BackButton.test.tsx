@@ -13,7 +13,6 @@ vi.mock("next/navigation", () => ({
 describe("BackButton", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset document.referrer mock
     Object.defineProperty(document, "referrer", {
       value: "",
       configurable: true,

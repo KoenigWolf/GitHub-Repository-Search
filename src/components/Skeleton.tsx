@@ -1,6 +1,9 @@
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { UI } from "@/lib/constants";
 import { Card } from "@/components/ui/card";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
+import { getMessages } from "@/lib/messages";
 
 interface SkeletonProps {
   className?: string;
@@ -12,6 +15,28 @@ function Skeleton({ className }: SkeletonProps) {
       className={cn("animate-pulse rounded-md bg-muted", className)}
       aria-hidden="true"
     />
+  );
+}
+
+interface SkeletonContainerProps {
+  children: ReactNode;
+  className?: string;
+  label?: string;
+  locale?: Locale | undefined;
+}
+
+function SkeletonContainer({
+  children,
+  className,
+  label,
+  locale = DEFAULT_LOCALE,
+}: SkeletonContainerProps) {
+  // Lazy: only call getMessages when label is not provided
+  const resolvedLabel = label ?? getMessages(locale).loading;
+  return (
+    <div className={className} aria-busy="true" aria-label={resolvedLabel}>
+      {children}
+    </div>
   );
 }
 
@@ -41,22 +66,41 @@ export function RepositoryCardSkeleton() {
   );
 }
 
-export function SearchResultsSkeleton() {
+interface SkeletonComponentProps {
+  locale?: Locale;
+}
+
+export function SearchResultsSkeleton({ locale }: SkeletonComponentProps = {}) {
   return (
-    <div className="space-y-6" aria-busy="true" aria-label="読み込み中">
+    <SkeletonContainer className="space-y-6" locale={locale}>
       <Skeleton className="h-5 w-48" />
       <div className="space-y-4">
         {Array.from({ length: UI.SKELETON_ITEM_COUNT }).map((_, i) => (
           <RepositoryCardSkeleton key={i} />
         ))}
       </div>
-    </div>
+    </SkeletonContainer>
   );
 }
 
-export function RepositoryDetailSkeleton() {
+export function SearchFormSkeleton({ locale = DEFAULT_LOCALE }: SkeletonComponentProps = {}) {
+  const m = getMessages(locale);
   return (
-    <div className="space-y-6" aria-busy="true" aria-label="読み込み中">
+    <SkeletonContainer
+      className="flex flex-col gap-4 sm:flex-row sm:items-center"
+      label={m.loadingSearchForm}
+      locale={locale}
+    >
+      <Skeleton className="h-10 flex-1" />
+      <Skeleton className="h-10 w-full sm:w-40" />
+      <Skeleton className="h-10 w-full sm:w-24" />
+    </SkeletonContainer>
+  );
+}
+
+export function RepositoryDetailSkeleton({ locale }: SkeletonComponentProps = {}) {
+  return (
+    <SkeletonContainer className="space-y-6" locale={locale}>
       <Skeleton className="h-8 w-32" />
       <Card className="p-6">
         <div className="flex items-start gap-4">
@@ -73,6 +117,6 @@ export function RepositoryDetailSkeleton() {
           <Skeleton key={i} className="h-24 rounded-lg" />
         ))}
       </div>
-    </div>
+    </SkeletonContainer>
   );
 }

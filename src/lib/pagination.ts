@@ -24,29 +24,23 @@ export function calculatePageNumbers(
   }
 
   const pages: PageItem[] = [];
-
-  // 常に最初のページを追加
   pages.push(1);
 
   const rangeStart = Math.max(2, currentPage - delta);
   const rangeEnd = Math.min(totalPages - 1, currentPage + delta);
 
-  // 最初のページと範囲開始の間に省略記号が必要か
   if (rangeStart > 2) {
     pages.push("ellipsis");
   }
 
-  // 中間のページ番号を追加
   for (let i = rangeStart; i <= rangeEnd; i++) {
     pages.push(i);
   }
 
-  // 範囲終了と最後のページの間に省略記号が必要か
   if (rangeEnd < totalPages - 1) {
     pages.push("ellipsis");
   }
 
-  // 最後のページを追加
   pages.push(totalPages);
 
   return pages;

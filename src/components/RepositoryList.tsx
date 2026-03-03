@@ -3,6 +3,8 @@ import { Pagination } from "@/components/Pagination";
 import type { GitHubRepository } from "@/lib/schemas/github";
 import { formatNumber } from "@/lib/utils";
 import { GITHUB_API } from "@/lib/constants";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
+import { getMessages } from "@/lib/messages";
 
 interface RepositoryListProps {
   repositories: GitHubRepository[];
@@ -10,6 +12,7 @@ interface RepositoryListProps {
   currentPage: number;
   totalPages: number;
   query: string;
+  locale?: Locale;
 }
 
 export function RepositoryList({
@@ -18,14 +21,20 @@ export function RepositoryList({
   currentPage,
   totalPages,
   query,
+  locale = DEFAULT_LOCALE,
 }: RepositoryListProps) {
+  const m = getMessages(locale);
+
   return (
     <div className="space-y-6">
       <div className="text-sm text-muted-foreground">
-        &ldquo;{query}&rdquo; の検索結果: {formatNumber(totalCount)} 件
+        &ldquo;{query}&rdquo; {m.searchResultSummary}: {formatNumber(totalCount, locale)}{" "}
+        {m.itemsSuffix}
         {totalCount > GITHUB_API.MAX_SEARCH_RESULTS && (
           <span className="ml-2 text-xs">
-            (GitHub APIの制限により最大{GITHUB_API.MAX_SEARCH_RESULTS.toLocaleString()}件まで表示)
+            ({m.apiLimitPrefix}
+            {GITHUB_API.MAX_SEARCH_RESULTS.toLocaleString(locale)}
+            {m.apiLimitSuffix})
           </span>
         )}
       </div>
@@ -33,12 +42,12 @@ export function RepositoryList({
       <ul className="space-y-4" role="list">
         {repositories.map((repo) => (
           <li key={repo.id}>
-            <RepositoryCard repository={repo} />
+            <RepositoryCard repository={repo} locale={locale} />
           </li>
         ))}
       </ul>
 
-      <Pagination currentPage={currentPage} totalPages={totalPages} />
+      <Pagination currentPage={currentPage} totalPages={totalPages} locale={locale} />
     </div>
   );
 }
