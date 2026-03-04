@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/ui/search-input";
@@ -27,17 +27,18 @@ export function SearchForm({
     setQuery(getParam("q") ?? "");
   }, [searchParams, getParam]);
 
-  const trimmedQuery = useMemo(() => query.trim(), [query]);
-
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      if (!trimmedQuery) return;
+      const trimmed = query.trim();
+      if (!trimmed) return;
 
-      navigate({ q: trimmedQuery, page: 1 });
+      navigate({ q: trimmed, page: 1 });
     },
-    [trimmedQuery, navigate]
+    [query, navigate]
   );
+
+  const isSubmitDisabled = !query.trim();
 
   const handleClear = useCallback(() => {
     setQuery("");
@@ -60,7 +61,7 @@ export function SearchForm({
         maxLength={GITHUB_API.MAX_QUERY_LENGTH}
       />
 
-      <Button type="submit" disabled={!trimmedQuery} className="shrink-0">
+      <Button type="submit" disabled={isSubmitDisabled} className="shrink-0">
         <Search className="mr-2 h-4 w-4" />
         {m.searchButton}
       </Button>
