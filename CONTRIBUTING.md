@@ -62,9 +62,10 @@ const [query, setQuery] = useState(initialQuery);
 // ✅ Good: ブラウザ拡張機能による変更を許容
 // フォーム要素はパスワードマネージャー等が data-* 属性を追加する
 <form suppressHydrationWarning>
-<input suppressHydrationWarning />
-<select suppressHydrationWarning />
-<button suppressHydrationWarning />
+  <input suppressHydrationWarning />
+  <select suppressHydrationWarning />
+  <button suppressHydrationWarning />
+</form>
 
 // ❌ Bad: SSR/CSR の値の違いを隠す
 // 根本原因を解決すべき
