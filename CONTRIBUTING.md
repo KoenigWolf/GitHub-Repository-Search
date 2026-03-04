@@ -56,7 +56,20 @@ const [query, setQuery] = useState(searchParams.get("q") ?? "");
 const [query, setQuery] = useState(initialQuery);
 ```
 
-`suppressHydrationWarning` は使わない。根本原因を解決する。
+### suppressHydrationWarning の使い分け
+
+```typescript
+// ✅ Good: ブラウザ拡張機能による変更を許容
+// フォーム要素はパスワードマネージャー等が data-* 属性を追加する
+<form suppressHydrationWarning>
+<input suppressHydrationWarning />
+<select suppressHydrationWarning />
+<button suppressHydrationWarning />
+
+// ❌ Bad: SSR/CSR の値の違いを隠す
+// 根本原因を解決すべき
+const [value, setValue] = useState(window.location.search); // 修正が必要
+```
 
 ### null / undefined の扱い
 
