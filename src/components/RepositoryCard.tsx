@@ -9,6 +9,7 @@ import type { GitHubRepository } from "@/lib/schemas/github";
 import { formatDate } from "@/lib/utils";
 import { DEFAULT_LOCALE, type Locale, toLangParam } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
+import { isValidReturnPath } from "@/lib/validators";
 
 interface RepositoryCardProps {
   repository: GitHubRepository;
@@ -37,7 +38,7 @@ export const RepositoryCard = memo(function RepositoryCard({
   if (lang === "en") {
     queryParams.set("lang", "en");
   }
-  if (returnTo) {
+  if (isValidReturnPath(returnTo)) {
     queryParams.set("returnTo", returnTo);
   }
   const queryString = queryParams.toString();

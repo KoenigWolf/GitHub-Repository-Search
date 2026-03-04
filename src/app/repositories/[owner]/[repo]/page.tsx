@@ -28,7 +28,7 @@ import { APP_NAME } from "@/lib/constants";
 import { resolveLocale, toLangParam, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
 import { formatDate } from "@/lib/utils";
-import { normalizeParam } from "@/lib/validators";
+import { normalizeParam, isValidReturnPath } from "@/lib/validators";
 
 type SearchParamValue = string | string[] | undefined;
 
@@ -98,12 +98,11 @@ async function RepositoryDetail({
     },
   ];
 
+  const defaultHref = lang === "en" ? "/search?lang=en" : "/search";
   const fallbackHref =
-    returnTo && (returnTo === "/search" || returnTo.startsWith("/search?"))
+    isValidReturnPath(returnTo) && returnTo.startsWith("/search")
       ? returnTo
-      : lang === "en"
-        ? "/search?lang=en"
-        : "/search";
+      : defaultHref;
 
   return (
     <div className="space-y-6">
@@ -192,7 +191,7 @@ export default async function RepositoryPage({
         owner={owner}
         repo={repo}
         locale={locale}
-        {...(returnTo !== undefined && { returnTo })}
+        {...(isValidReturnPath(returnTo) && { returnTo })}
       />
     </Suspense>
   );

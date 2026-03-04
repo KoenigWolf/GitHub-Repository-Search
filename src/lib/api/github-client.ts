@@ -12,7 +12,7 @@ import { GITHUB_API } from "@/lib/constants";
 import { parseSortValue } from "@/lib/validators";
 import { env, hasGitHubToken, isProduction } from "@/lib/env";
 
-export type GitHubApiErrorCode =
+type GitHubApiErrorCode =
   | "NETWORK_ERROR"
   | "RATE_LIMIT"
   | "INVALID_QUERY"
@@ -20,7 +20,7 @@ export type GitHubApiErrorCode =
   | "VALIDATION_ERROR"
   | "UNKNOWN_ERROR";
 
-export interface GitHubApiError {
+interface GitHubApiError {
   code: GitHubApiErrorCode;
   status: number;
   details?: unknown;
