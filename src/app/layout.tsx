@@ -47,17 +47,11 @@ export default function RootLayout({
           <div className="container mx-auto flex items-center gap-4 px-4 py-3">
             <Link
               href="/search"
-              className="flex items-center hover:opacity-80 transition-opacity"
-              aria-label={APP_NAME}
+              className="flex items-center gap-4 hover:opacity-80 transition-opacity"
             >
               <GitHubLogo className="h-8 w-8" />
-            </Link>
-            <div className="h-6 w-px bg-header-border" aria-hidden="true" />
-            <Link
-              href="/search"
-              className="text-sm font-semibold hover:opacity-80 transition-opacity"
-            >
-              {APP_NAME}
+              <div className="h-6 w-px bg-header-border" aria-hidden="true" />
+              <span className="text-sm font-semibold">{APP_NAME}</span>
             </Link>
           </div>
         </header>
