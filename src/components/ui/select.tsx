@@ -7,7 +7,6 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ className, children, ...props }, ref) => {
     return (
       <select
-        suppressHydrationWarning
         className={cn(formInputBase, className)}
         ref={ref}
         {...props}

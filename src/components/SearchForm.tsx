@@ -13,16 +13,20 @@ import { useSearchNavigation } from "@/hooks/useSearchNavigation";
 
 interface SearchFormProps {
   locale?: Locale;
+  initialQuery?: string;
+  initialSort?: SortValue;
 }
 
-export function SearchForm({ locale = DEFAULT_LOCALE }: SearchFormProps) {
+export function SearchForm({
+  locale = DEFAULT_LOCALE,
+  initialQuery = "",
+  initialSort = "best-match",
+}: SearchFormProps) {
   const { navigate, getParam, searchParams } = useSearchNavigation();
   const m = getMessages(locale);
 
-  const [query, setQuery] = useState(getParam("q") ?? "");
-  const [sort, setSort] = useState<SortValue>(
-    normalizeSortParam(getParam("sort"))
-  );
+  const [query, setQuery] = useState(initialQuery);
+  const [sort, setSort] = useState<SortValue>(initialSort);
 
   useEffect(() => {
     setQuery(getParam("q") ?? "");
@@ -51,7 +55,6 @@ export function SearchForm({ locale = DEFAULT_LOCALE }: SearchFormProps) {
       role="search"
       aria-label={m.searchAriaLabel}
       className="flex flex-col gap-4 sm:flex-row sm:items-center"
-      suppressHydrationWarning
     >
       <SearchInput
         placeholder={m.searchPlaceholder}

@@ -11,7 +11,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <input
         type={type}
-        suppressHydrationWarning
         className={cn(
           formInputBase,
           "file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground",
