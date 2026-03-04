@@ -19,11 +19,10 @@ export const StatDisplay = memo(function StatDisplay({
   suffix,
   locale = DEFAULT_LOCALE,
 }: StatDisplayProps) {
+  const formatted = formatNumber(value, locale);
   return (
     <IconText icon={icon} title={title}>
-      <span aria-label={`${value} ${suffix}`}>
-        {formatNumber(value, locale)}
-      </span>
+      <span aria-label={`${formatted} ${suffix}`}>{formatted}</span>
     </IconText>
   );
 });

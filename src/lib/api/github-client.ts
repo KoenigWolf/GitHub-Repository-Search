@@ -11,7 +11,7 @@ import {
 import { GITHUB_API } from "@/lib/constants";
 import { env, hasGitHubToken, isProduction } from "@/lib/env";
 
-type GitHubApiErrorCode =
+export type GitHubApiErrorCode =
   | "NETWORK_ERROR"
   | "RATE_LIMIT"
   | "INVALID_QUERY"
@@ -19,20 +19,27 @@ type GitHubApiErrorCode =
   | "VALIDATION_ERROR"
   | "UNKNOWN_ERROR";
 
-interface GitHubApiError {
+export interface GitHubApiError {
   code: GitHubApiErrorCode;
-  message: string;
   status: number;
   details?: unknown;
 }
 
-const ERROR_MESSAGES: Record<GitHubApiErrorCode, string> = {
-  NETWORK_ERROR: "ネットワークエラーが発生しました。インターネット接続を確認してください。",
-  RATE_LIMIT: "APIレート制限に達しました。しばらく待ってから再試行してください。",
-  INVALID_QUERY: "検索クエリが無効です。",
-  NOT_FOUND: "リポジトリが見つかりませんでした。",
-  VALIDATION_ERROR: "APIレスポンスの形式が不正です。",
-  UNKNOWN_ERROR: "予期しないエラーが発生しました。",
+export const ERROR_CODE_MESSAGE_KEYS: Record<
+  GitHubApiErrorCode,
+  | "errorNetworkError"
+  | "errorRateLimit"
+  | "errorInvalidQuery"
+  | "errorNotFound"
+  | "errorValidation"
+  | "errorUnknown"
+> = {
+  NETWORK_ERROR: "errorNetworkError",
+  RATE_LIMIT: "errorRateLimit",
+  INVALID_QUERY: "errorInvalidQuery",
+  NOT_FOUND: "errorNotFound",
+  VALIDATION_ERROR: "errorValidation",
+  UNKNOWN_ERROR: "errorUnknown",
 };
 
 function createApiError(
@@ -42,7 +49,6 @@ function createApiError(
 ): GitHubApiError {
   return {
     code,
-    message: ERROR_MESSAGES[code],
     status,
     details,
   };
@@ -92,18 +98,18 @@ const RETRY_CONFIG = {
   requestTimeoutMs: 10000,
 } as const;
 
-function isRetryableError(error: unknown): boolean {
-  if (error instanceof Error) {
-    const message = error.message.toLowerCase();
-    return (
-      error.name === "AbortError" ||
-      error.name === "TypeError" ||
-      message.includes("network") ||
-      message.includes("timeout") ||
-      message.includes("econnreset")
-    );
+function isRetryableError(error: unknown): error is Error {
+  if (!(error instanceof Error)) {
+    return false;
   }
-  return false;
+  const message = error.message.toLowerCase();
+  return (
+    error.name === "AbortError" ||
+    error.name === "TypeError" ||
+    message.includes("network") ||
+    message.includes("timeout") ||
+    message.includes("econnreset")
+  );
 }
 
 function isRetryableStatus(status: number): boolean {
@@ -180,20 +186,29 @@ async function validateResponse<T>(
   response: Response,
   schema: z.ZodType<T>
 ): Promise<Result<T, GitHubApiError>> {
+  let json: unknown;
   try {
-    const json = await response.json();
-    const parsed = schema.safeParse(json);
-
-    if (!parsed.success) {
-      return err(
-        createApiError("VALIDATION_ERROR", response.status, parsed.error.issues)
-      );
-    }
-
-    return ok(parsed.data);
-  } catch {
-    return err(createApiError("VALIDATION_ERROR", response.status));
+    json = await response.json();
+  } catch (e) {
+    return err(
+      createApiError("VALIDATION_ERROR", response.status, {
+        type: "JSON_PARSE_ERROR",
+        message: e instanceof Error ? e.message : "Failed to parse JSON",
+      })
+    );
   }
+
+  const parsed = schema.safeParse(json);
+  if (!parsed.success) {
+    return err(
+      createApiError("VALIDATION_ERROR", response.status, {
+        type: "SCHEMA_VALIDATION_ERROR",
+        issues: parsed.error.issues,
+      })
+    );
+  }
+
+  return ok(parsed.data);
 }
 
 async function handleApiResponse<T>(
