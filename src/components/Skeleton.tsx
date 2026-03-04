@@ -75,7 +75,7 @@ export function SearchResultsSkeleton({ locale }: SkeletonComponentProps = {}) {
       <Skeleton className="h-5 w-48" />
       <div className="space-y-4">
         {Array.from({ length: UI.SKELETON_ITEM_COUNT }).map((_, i) => (
-          <RepositoryCardSkeleton key={i} />
+          <RepositoryCardSkeleton key={`skeleton-card-${i}`} />
         ))}
       </div>
     </SkeletonContainer>
@@ -113,7 +113,7 @@ export function RepositoryDetailSkeleton({ locale }: SkeletonComponentProps = {}
       </Card>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: UI.SKELETON_STAT_CARD_COUNT }).map((_, i) => (
-          <Skeleton key={i} className="h-24 rounded-lg" />
+          <Skeleton key={`skeleton-stat-${i}`} className="h-24 rounded-lg" />
         ))}
       </div>
     </SkeletonContainer>

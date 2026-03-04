@@ -20,7 +20,7 @@ interface SearchFormProps {
 export function SearchForm({
   locale = DEFAULT_LOCALE,
   initialQuery = "",
-  initialSort = "best-match",
+  initialSort = SORT_VALUES[0],
 }: SearchFormProps) {
   const { navigate, getParam, searchParams } = useSearchNavigation();
   const m = getMessages(locale);
