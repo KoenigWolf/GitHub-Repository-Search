@@ -113,7 +113,6 @@ test.describe("Accessibility", () => {
   test("should be keyboard navigable", async ({ page }) => {
     await page.goto("/search");
 
-    // Explicitly focus the search input to set a known starting point
     const searchInput = page.getByPlaceholder(/リポジトリを検索/);
     await searchInput.focus();
     await expect(searchInput).toBeFocused();

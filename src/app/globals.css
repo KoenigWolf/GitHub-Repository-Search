@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  /* GitHub Light Mode */
   :root {
     --background: 0 0% 100%;
     --foreground: 216 18% 14%;
@@ -27,14 +26,11 @@
     --input: 210 18% 85%;
     --ring: 212 92% 45%;
     --radius: 0.375rem;
-
-    /* GitHub header */
     --header-bg: 210 13% 16%;
     --header-fg: 0 0% 100%;
     --header-border: 213 14% 21%;
   }
 
-  /* GitHub Dark Mode */
   @media (prefers-color-scheme: dark) {
     :root {
       --background: 215 50% 7%;
@@ -58,8 +54,6 @@
       --border: 213 14% 21%;
       --input: 213 14% 21%;
       --ring: 212 93% 58%;
-
-      /* GitHub header */
       --header-bg: 215 50% 3%;
       --header-fg: 0 0% 100%;
       --header-border: 213 14% 21%;

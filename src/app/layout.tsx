@@ -61,7 +61,9 @@ export default function RootLayout({
             </Link>
           </div>
         </header>
-        <main id="main-content" className="container mx-auto px-4 py-6">{children}</main>
+        <main id="main-content" className="container mx-auto px-4 py-6">
+          {children}
+        </main>
       </body>
     </html>
   );
