@@ -145,6 +145,7 @@ const result = await searchRepositories({ query: "react" });
 
 if (!result.success) {
   // 型安全にエラーを処理（code からローカライズされたメッセージを取得）
+  const m = getMessages("ja-JP"); // or "en-US"
   const messageKey = ERROR_CODE_MESSAGE_KEYS[result.error.code];
   console.error(result.error.code, m[messageKey]);
   return;
@@ -180,11 +181,11 @@ Next.js 15 の App Router を活用し、データフェッチが必要なコン
 検索体験を高速化するため、複数の最適化を実施しています：
 
 - **Edge Runtime**: 検索ページとリポジトリ詳細ページで Edge Runtime を使用し、コールドスタートを高速化
-- **Suspense**: React Suspense による段階的レンダリングで初期表示を高速化
-- **React.memo**: 頻繁に再レンダリングされるコンポーネント（RepositoryCard, StatDisplay など）をメモ化
-- **Intl.DateTimeFormat キャッシュ**: 日付フォーマッターをキャッシュして再利用
-- **指数バックオフリトライ**: API エラー時の自動リトライで信頼性向上
-- **環境変数キャッシュ**: 本番環境で環境変数パース結果をキャッシュ
+- **Suspense**: React Suspense による段階的レンダリングで初期表示を高速化 (`src/app/search/page.tsx`)
+- **React.memo**: 頻繁に再レンダリングされるコンポーネントをメモ化 (`RepositoryCard`, `StatDisplay`)
+- **Intl.DateTimeFormat キャッシュ**: 日付フォーマッターをキャッシュして再利用 (`src/lib/utils.ts`)
+- **指数バックオフリトライ**: API エラー時の自動リトライで信頼性向上 (`src/lib/api/github-client.ts`)
+- **環境変数キャッシュ**: 本番環境で環境変数パース結果をキャッシュ (`src/lib/env.ts`)
 
 ### 多言語対応（i18n）
 
