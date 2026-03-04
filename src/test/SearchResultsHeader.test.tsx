@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { SearchResultsHeader } from "@/components/SearchResultsHeader";
 
 const mockPush = vi.fn();
-const mockSearchParams = new URLSearchParams();
+let mockSearchParams = new URLSearchParams();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
@@ -14,6 +14,7 @@ vi.mock("next/navigation", () => ({
 describe("SearchResultsHeader", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockSearchParams = new URLSearchParams();
   });
 
   it("結果数を表示する", () => {
