@@ -21,9 +21,15 @@ npm run dev
 // Good: Props インターフェースを定義
 interface SearchFormProps {
   locale?: Locale;
+  initialQuery?: string;
+  initialSort?: SortValue;
 }
 
-export function SearchForm({ locale = DEFAULT_LOCALE }: SearchFormProps) {
+export function SearchForm({
+  locale = DEFAULT_LOCALE,
+  initialQuery = "",
+  initialSort = "best-match",
+}: SearchFormProps) {
   // ...
 }
 
@@ -32,6 +38,25 @@ export const RepositoryCard = memo(function RepositoryCard(props) {
   // ...
 });
 ```
+
+### SSR とハイドレーション
+
+Server Component から Client Component へ初期値を渡し、ハイドレーションミスマッチを防ぐ:
+
+```typescript
+// ❌ Bad: Client で URL パラメータから初期化
+// サーバーとクライアントで値が異なる
+const [query, setQuery] = useState(searchParams.get("q") ?? "");
+
+// ✅ Good: Server から props で初期値を渡す
+// SearchPage.tsx (Server Component)
+<SearchForm initialQuery={query} initialSort={sort} />
+
+// SearchForm.tsx (Client Component)
+const [query, setQuery] = useState(initialQuery);
+```
+
+`suppressHydrationWarning` は使わない。根本原因を解決する。
 
 ### null / undefined の扱い
 
@@ -62,6 +87,25 @@ try {
   const data = await fetchData();
 } catch {
   // エラー無視
+}
+```
+
+### 型ガード
+
+`unknown` 型を絞り込む際は型ガードを使用:
+
+```typescript
+// Good: 型ガードで型を絞り込む
+function isRetryableError(error: unknown): error is Error {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+  return error.name === "AbortError" || error.name === "TypeError";
+}
+
+// 使用側で型が絞り込まれる
+if (isRetryableError(error)) {
+  console.log(error.message); // Error 型として扱える
 }
 ```
 
