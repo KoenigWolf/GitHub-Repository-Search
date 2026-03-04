@@ -1,19 +1,7 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import Link from "next/link";
 import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants";
 import "./globals.css";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -54,21 +42,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
-      >
-        <header className="border-b border-border bg-card">
-          <div className="container mx-auto flex items-center gap-3 px-4 py-4">
+      <body className="font-sans antialiased min-h-screen">
+        <header className="bg-header text-header-foreground">
+          <div className="container mx-auto flex items-center gap-4 px-4 py-3">
             <Link
               href="/search"
-              className="flex items-center gap-2 text-lg font-semibold hover:opacity-80"
+              className="flex items-center hover:opacity-80 transition-opacity"
+              aria-label="ホームに戻る"
             >
               <GitHubLogo className="h-8 w-8" />
-              <span>{APP_NAME}</span>
+            </Link>
+            <div className="h-6 w-px bg-header-border" aria-hidden="true" />
+            <Link
+              href="/search"
+              className="text-sm font-semibold hover:opacity-80 transition-opacity"
+            >
+              {APP_NAME}
             </Link>
           </div>
         </header>
-        <main className="container mx-auto px-4 py-8">{children}</main>
+        <main className="container mx-auto px-4 py-6">{children}</main>
       </body>
     </html>
   );
