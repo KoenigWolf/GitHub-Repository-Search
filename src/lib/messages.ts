@@ -50,6 +50,14 @@ const messages = {
     topics: "トピック",
     sortBestMatch: "ベストマッチ",
     pagesOmitted: "ページ省略",
+    errorNetworkError:
+      "ネットワークエラーが発生しました。インターネット接続を確認してください。",
+    errorRateLimit:
+      "APIレート制限に達しました。しばらく待ってから再試行してください。",
+    errorInvalidQuery: "検索クエリが無効です。",
+    errorNotFound: "リポジトリが見つかりませんでした。",
+    errorValidation: "APIレスポンスの形式が不正です。",
+    errorUnknown: "予期しないエラーが発生しました。",
   },
   "en-US": {
     searchAriaLabel: "Search repositories",
@@ -100,6 +108,14 @@ const messages = {
     topics: "Topics",
     sortBestMatch: "Best match",
     pagesOmitted: "Pages omitted",
+    errorNetworkError:
+      "A network error occurred. Please check your internet connection.",
+    errorRateLimit:
+      "API rate limit reached. Please wait a moment and try again.",
+    errorInvalidQuery: "Invalid search query.",
+    errorNotFound: "Repository not found.",
+    errorValidation: "Invalid API response format.",
+    errorUnknown: "An unexpected error occurred.",
   },
 } as const;
 

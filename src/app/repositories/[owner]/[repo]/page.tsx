@@ -23,7 +23,7 @@ import { ErrorPanel } from "@/components/ErrorPanel";
 import { OwnerAvatar } from "@/components/OwnerAvatar";
 import { RepositoryTopics } from "@/components/RepositoryTopics";
 import { RepositoryDetailSkeleton } from "@/components/Skeleton";
-import { getRepository } from "@/lib/api/github-client";
+import { getRepository, ERROR_CODE_MESSAGE_KEYS } from "@/lib/api/github-client";
 import { APP_NAME } from "@/lib/constants";
 import { resolveLocale, toLangParam, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
@@ -65,7 +65,8 @@ async function RepositoryDetail({
     if (result.error.code === "NOT_FOUND") {
       notFound();
     }
-    return <ErrorPanel message={result.error.message} variant="inline" locale={locale} />;
+    const messageKey = ERROR_CODE_MESSAGE_KEYS[result.error.code];
+    return <ErrorPanel message={m[messageKey]} variant="inline" locale={locale} />;
   }
 
   const repository = result.data;

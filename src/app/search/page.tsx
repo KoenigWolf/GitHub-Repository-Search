@@ -6,7 +6,7 @@ import { RepositoryList } from "@/components/RepositoryList";
 import { SearchResultsSkeleton, SearchFormSkeleton } from "@/components/Skeleton";
 import { ErrorPanel } from "@/components/ErrorPanel";
 import { EmptyState } from "@/components/EmptyState";
-import { searchRepositories } from "@/lib/api/github-client";
+import { searchRepositories, ERROR_CODE_MESSAGE_KEYS } from "@/lib/api/github-client";
 import { APP_NAME, GITHUB_API, type SortValue } from "@/lib/constants";
 import { resolveLocale, toLangParam, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
@@ -75,7 +75,8 @@ async function SearchResults({
   });
 
   if (!result.success) {
-    return <ErrorPanel message={result.error.message} variant="inline" locale={locale} />;
+    const messageKey = ERROR_CODE_MESSAGE_KEYS[result.error.code];
+    return <ErrorPanel message={m[messageKey]} variant="inline" locale={locale} />;
   }
 
   const { data } = result;

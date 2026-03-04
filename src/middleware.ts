@@ -1,14 +1,28 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-const RATE_LIMIT_WINDOW_MS = 60_000;
-const RATE_LIMIT_MAX_REQUESTS = 120;
-const CLEANUP_INTERVAL_REQUESTS = 100;
+export const RATE_LIMIT_CONFIG = {
+  windowMs: 60_000,
+  maxRequests: 120,
+  cleanupInterval: 100,
+  maxClients: 10_000,
+} as const;
 
-const requestLog = new Map<string, number[]>();
-let requestCount = 0;
+export interface RateLimitState {
+  requestLog: Map<string, number[]>;
+  requestCount: number;
+}
 
-function isValidIp(ip: string): boolean {
+export function createRateLimitState(): RateLimitState {
+  return {
+    requestLog: new Map(),
+    requestCount: 0,
+  };
+}
+
+const state = createRateLimitState();
+
+export function isValidIp(ip: string): boolean {
   const ipv4Pattern =
     /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/;
   const ipv6Pattern =
@@ -16,14 +30,14 @@ function isValidIp(ip: string): boolean {
   return ipv4Pattern.test(ip) || ipv6Pattern.test(ip);
 }
 
-function normalizeIp(value?: string | null): string | null {
+export function normalizeIp(value?: string | null): string | null {
   if (!value) return null;
   const trimmed = value.trim();
   if (!trimmed) return null;
   return isValidIp(trimmed) ? trimmed : null;
 }
 
-function getClientKey(request: NextRequest): string {
+export function getClientKey(request: NextRequest): string | null {
   const realIp = normalizeIp(request.headers.get("x-real-ip"));
   if (realIp) return realIp;
 
@@ -36,40 +50,78 @@ function getClientKey(request: NextRequest): string {
   const requestIp = normalizeIp((request as NextRequest & { ip?: string }).ip ?? null);
   if (requestIp) return requestIp;
 
-  return "unknown";
+  return null;
 }
 
-function cleanupStaleEntries(now: number): void {
-  const cutoff = now - RATE_LIMIT_WINDOW_MS;
-  for (const [clientKey, timestamps] of requestLog.entries()) {
+export function cleanupStaleEntries(
+  rateLimitState: RateLimitState,
+  now: number
+): void {
+  const cutoff = now - RATE_LIMIT_CONFIG.windowMs;
+  for (const [clientKey, timestamps] of rateLimitState.requestLog.entries()) {
     const recent = timestamps.filter((ts) => ts > cutoff);
     if (recent.length === 0) {
-      requestLog.delete(clientKey);
+      rateLimitState.requestLog.delete(clientKey);
       continue;
     }
-    requestLog.set(clientKey, recent);
+    rateLimitState.requestLog.set(clientKey, recent);
   }
 }
 
-function isRateLimited(clientKey: string, now: number): boolean {
-  const cutoff = now - RATE_LIMIT_WINDOW_MS;
-  const recentRequests = (requestLog.get(clientKey) ?? []).filter((ts) => ts > cutoff);
+function evictOldestClient(rateLimitState: RateLimitState): void {
+  let oldestKey: string | null = null;
+  let oldestTime = Infinity;
+
+  for (const [key, timestamps] of rateLimitState.requestLog.entries()) {
+    const lastAccess = timestamps[timestamps.length - 1] ?? 0;
+    if (lastAccess < oldestTime) {
+      oldestTime = lastAccess;
+      oldestKey = key;
+    }
+  }
+
+  if (oldestKey) {
+    rateLimitState.requestLog.delete(oldestKey);
+  }
+}
+
+export function isRateLimited(
+  rateLimitState: RateLimitState,
+  clientKey: string,
+  now: number
+): boolean {
+  const cutoff = now - RATE_LIMIT_CONFIG.windowMs;
+  const recentRequests = (rateLimitState.requestLog.get(clientKey) ?? []).filter(
+    (ts) => ts > cutoff
+  );
   recentRequests.push(now);
-  requestLog.set(clientKey, recentRequests);
-  return recentRequests.length > RATE_LIMIT_MAX_REQUESTS;
+
+  if (
+    !rateLimitState.requestLog.has(clientKey) &&
+    rateLimitState.requestLog.size >= RATE_LIMIT_CONFIG.maxClients
+  ) {
+    evictOldestClient(rateLimitState);
+  }
+
+  rateLimitState.requestLog.set(clientKey, recentRequests);
+  return recentRequests.length > RATE_LIMIT_CONFIG.maxRequests;
 }
 
 export function middleware(request: NextRequest) {
   const now = Date.now();
-  requestCount += 1;
+  state.requestCount += 1;
 
-  if (requestCount % CLEANUP_INTERVAL_REQUESTS === 0) {
-    cleanupStaleEntries(now);
+  if (state.requestCount % RATE_LIMIT_CONFIG.cleanupInterval === 0) {
+    cleanupStaleEntries(state, now);
   }
 
   const clientKey = getClientKey(request);
 
-  if (isRateLimited(clientKey, now)) {
+  if (clientKey === null) {
+    return NextResponse.next();
+  }
+
+  if (isRateLimited(state, clientKey, now)) {
     return new NextResponse("Too Many Requests", {
       status: 429,
       headers: {

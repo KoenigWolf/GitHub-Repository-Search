@@ -11,7 +11,7 @@ import {
 import { GITHUB_API } from "@/lib/constants";
 import { env, hasGitHubToken, isProduction } from "@/lib/env";
 
-type GitHubApiErrorCode =
+export type GitHubApiErrorCode =
   | "NETWORK_ERROR"
   | "RATE_LIMIT"
   | "INVALID_QUERY"
@@ -19,20 +19,27 @@ type GitHubApiErrorCode =
   | "VALIDATION_ERROR"
   | "UNKNOWN_ERROR";
 
-interface GitHubApiError {
+export interface GitHubApiError {
   code: GitHubApiErrorCode;
-  message: string;
   status: number;
   details?: unknown;
 }
 
-const ERROR_MESSAGES: Record<GitHubApiErrorCode, string> = {
-  NETWORK_ERROR: "ネットワークエラーが発生しました。インターネット接続を確認してください。",
-  RATE_LIMIT: "APIレート制限に達しました。しばらく待ってから再試行してください。",
-  INVALID_QUERY: "検索クエリが無効です。",
-  NOT_FOUND: "リポジトリが見つかりませんでした。",
-  VALIDATION_ERROR: "APIレスポンスの形式が不正です。",
-  UNKNOWN_ERROR: "予期しないエラーが発生しました。",
+export const ERROR_CODE_MESSAGE_KEYS: Record<
+  GitHubApiErrorCode,
+  | "errorNetworkError"
+  | "errorRateLimit"
+  | "errorInvalidQuery"
+  | "errorNotFound"
+  | "errorValidation"
+  | "errorUnknown"
+> = {
+  NETWORK_ERROR: "errorNetworkError",
+  RATE_LIMIT: "errorRateLimit",
+  INVALID_QUERY: "errorInvalidQuery",
+  NOT_FOUND: "errorNotFound",
+  VALIDATION_ERROR: "errorValidation",
+  UNKNOWN_ERROR: "errorUnknown",
 };
 
 function createApiError(
@@ -42,7 +49,6 @@ function createApiError(
 ): GitHubApiError {
   return {
     code,
-    message: ERROR_MESSAGES[code],
     status,
     details,
   };

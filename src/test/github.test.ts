@@ -117,9 +117,7 @@ describe("searchRepositories", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.code).toBe("RATE_LIMIT");
-      expect(result.error.message).toBe(
-        "APIレート制限に達しました。しばらく待ってから再試行してください。"
-      );
+      expect(result.error.status).toBe(403);
     }
   });
 
@@ -135,7 +133,7 @@ describe("searchRepositories", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.code).toBe("INVALID_QUERY");
-      expect(result.error.message).toBe("検索クエリが無効です。");
+      expect(result.error.status).toBe(422);
     }
   });
 
@@ -190,9 +188,6 @@ describe("searchRepositories", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.code).toBe("NETWORK_ERROR");
-      expect(result.error.message).toBe(
-        "ネットワークエラーが発生しました。インターネット接続を確認してください。"
-      );
       expect(result.error.status).toBe(0);
     }
   });
@@ -306,7 +301,6 @@ describe("getRepository", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.code).toBe("NOT_FOUND");
-      expect(result.error.message).toBe("リポジトリが見つかりませんでした。");
       expect(result.error.status).toBe(404);
     }
   });
@@ -319,9 +313,6 @@ describe("getRepository", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.code).toBe("NETWORK_ERROR");
-      expect(result.error.message).toBe(
-        "ネットワークエラーが発生しました。インターネット接続を確認してください。"
-      );
       expect(result.error.status).toBe(0);
     }
   });
