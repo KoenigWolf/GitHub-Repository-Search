@@ -49,6 +49,7 @@ const messages = {
     backToSearchPage: "検索ページに戻る",
     topics: "トピック",
     sortBestMatch: "ベストマッチ",
+    pagesOmitted: "ページ省略",
   },
   "en-US": {
     searchAriaLabel: "Search repositories",
@@ -98,6 +99,7 @@ const messages = {
     backToSearchPage: "Back to search page",
     topics: "Topics",
     sortBestMatch: "Best match",
+    pagesOmitted: "Pages omitted",
   },
 } as const;
 

@@ -56,7 +56,8 @@ export function Pagination({
           <span
             key={`ellipsis-${index}`}
             className="px-2 text-muted-foreground"
-            aria-hidden="true"
+            role="separator"
+            aria-label={m.pagesOmitted}
           >
             &hellip;
           </span>
