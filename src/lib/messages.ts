@@ -55,6 +55,8 @@ const messages = {
     sortFewestForks: "フォーク数が少ない順",
     sortRecentlyUpdated: "最近更新された順",
     sortLeastRecentlyUpdated: "更新が古い順",
+    sortLabel: "並べ替え:",
+    repositoryResults: "件のリポジトリ",
     pagesOmitted: "ページ省略",
     errorNetworkError:
       "ネットワークエラーが発生しました。インターネット接続を確認してください。",
@@ -119,6 +121,8 @@ const messages = {
     sortFewestForks: "Fewest forks",
     sortRecentlyUpdated: "Recently updated",
     sortLeastRecentlyUpdated: "Least recently updated",
+    sortLabel: "Sort:",
+    repositoryResults: "repository results",
     pagesOmitted: "Pages omitted",
     errorNetworkError:
       "A network error occurred. Please check your internet connection.",
