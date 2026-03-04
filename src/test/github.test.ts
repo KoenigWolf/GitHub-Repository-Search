@@ -76,18 +76,64 @@ describe("searchRepositories", () => {
     expect(url.searchParams.get("page")).toBe("3");
   });
 
-  it("sortパラメータが正しく送信される", async () => {
+  it("sortパラメータが正しく送信される（stars-desc）", async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve(mockSearchResponse),
     });
 
-    await searchRepositories({ query: "react", sort: "stars" });
+    await searchRepositories({ query: "react", sort: "stars-desc" });
 
     const call = mockFetch.mock.calls[0];
     expect(call).toBeDefined();
     const url = new URL(call![0] as string);
     expect(url.searchParams.get("sort")).toBe("stars");
+    expect(url.searchParams.get("order")).toBe("desc");
+  });
+
+  it("sortパラメータが正しく送信される（stars-asc）", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(mockSearchResponse),
+    });
+
+    await searchRepositories({ query: "react", sort: "stars-asc" });
+
+    const call = mockFetch.mock.calls[0];
+    expect(call).toBeDefined();
+    const url = new URL(call![0] as string);
+    expect(url.searchParams.get("sort")).toBe("stars");
+    expect(url.searchParams.get("order")).toBe("asc");
+  });
+
+  it("sortパラメータが正しく送信される（forks-desc）", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(mockSearchResponse),
+    });
+
+    await searchRepositories({ query: "react", sort: "forks-desc" });
+
+    const call = mockFetch.mock.calls[0];
+    expect(call).toBeDefined();
+    const url = new URL(call![0] as string);
+    expect(url.searchParams.get("sort")).toBe("forks");
+    expect(url.searchParams.get("order")).toBe("desc");
+  });
+
+  it("sortパラメータが正しく送信される（updated-asc）", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(mockSearchResponse),
+    });
+
+    await searchRepositories({ query: "react", sort: "updated-asc" });
+
+    const call = mockFetch.mock.calls[0];
+    expect(call).toBeDefined();
+    const url = new URL(call![0] as string);
+    expect(url.searchParams.get("sort")).toBe("updated");
+    expect(url.searchParams.get("order")).toBe("asc");
   });
 
   it("best-matchの場合はsortパラメータを送信しない", async () => {

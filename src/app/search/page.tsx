@@ -95,7 +95,7 @@ async function SearchResults({
       totalCount={data.totalCount}
       currentPage={data.currentPage}
       totalPages={data.totalPages}
-      query={query}
+      sort={sort}
       locale={locale}
       returnTo={buildSearchPath({ query, sort, page, locale })}
     />
@@ -138,7 +138,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <div className="space-y-8">
       <Suspense fallback={<SearchFormSkeleton locale={locale} />}>
-        <SearchForm locale={locale} initialQuery={query} initialSort={sort} />
+        <SearchForm locale={locale} initialQuery={query} />
       </Suspense>
 
       {!query ? (

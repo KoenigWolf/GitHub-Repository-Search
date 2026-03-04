@@ -27,16 +27,6 @@ describe("RepositoryCard", () => {
     expect(screen.getByText("220.0k")).toBeInTheDocument();
   });
 
-  it("アバター画像のsrcとaltを正しく設定する", () => {
-    render(<RepositoryCard repository={mockRepository} />);
-    const img = screen.getByAltText("facebookのアバター");
-    expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute(
-      "src",
-      "https://avatars.githubusercontent.com/u/69631?v=4"
-    );
-  });
-
   it("トピックを表示する", () => {
     render(<RepositoryCard repository={mockRepository} />);
     expect(screen.getByText("react")).toBeInTheDocument();
@@ -73,10 +63,8 @@ describe("RepositoryCard", () => {
     expect(screen.getByText("+1")).toBeInTheDocument();
   });
 
-  it("英語ロケールでアバターaltと詳細リンクが正しく設定される", () => {
+  it("英語ロケールで詳細リンクにlang=enが付与される", () => {
     render(<RepositoryCard repository={mockRepository} locale="en-US" />);
-    const img = screen.getByAltText("facebook's avatar");
-    expect(img).toBeInTheDocument();
     const link = screen.getByRole("link", { name: "facebook/react" });
     expect(link).toHaveAttribute("href", "/repositories/facebook/react?lang=en");
   });

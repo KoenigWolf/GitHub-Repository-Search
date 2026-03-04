@@ -1,12 +1,11 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { calculatePageNumbers } from "@/lib/pagination";
 import { useSearchNavigation } from "@/hooks/useSearchNavigation";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
+import { cn } from "@/lib/utils";
 
 interface PaginationProps {
   currentPage: number;
@@ -39,17 +38,27 @@ export function Pagination({
     return null;
   }
 
+  const linkClass =
+    "px-3 py-2 text-sm border border-border rounded-md hover:bg-accent transition-colors";
+  const disabledClass = "pointer-events-none opacity-50";
+  const pageClass =
+    "min-w-[40px] px-3 py-2 text-sm text-center border border-border rounded-md hover:bg-accent transition-colors";
+  const activePageClass = "bg-primary text-primary-foreground border-primary hover:bg-primary/90";
+
   return (
-    <nav aria-label={m.pagination} className="flex items-center justify-center gap-1">
-      <Button
-        variant="outline"
-        size="icon"
+    <nav
+      aria-label={m.pagination}
+      className="flex items-center justify-center gap-2 pt-4"
+    >
+      <button
+        type="button"
         onClick={() => navigateToPage(currentPage - 1)}
         disabled={currentPage <= 1}
         aria-label={m.prevPage}
+        className={cn(linkClass, currentPage <= 1 && disabledClass)}
       >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
+        {m.prevPage}
+      </button>
 
       {pageNumbers.map((page, index) =>
         page === "ellipsis" ? (
@@ -62,28 +71,28 @@ export function Pagination({
             &hellip;
           </span>
         ) : (
-          <Button
+          <button
             key={page}
-            variant={page === currentPage ? "default" : "outline"}
-            size="icon"
+            type="button"
             onClick={() => navigateToPage(page)}
             aria-current={page === currentPage ? "page" : undefined}
             aria-label={`${m.pageLabel} ${page}`}
+            className={cn(pageClass, page === currentPage && activePageClass)}
           >
             {page}
-          </Button>
+          </button>
         )
       )}
 
-      <Button
-        variant="outline"
-        size="icon"
+      <button
+        type="button"
         onClick={() => navigateToPage(currentPage + 1)}
         disabled={currentPage >= totalPages}
         aria-label={m.nextPage}
+        className={cn(linkClass, currentPage >= totalPages && disabledClass)}
       >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
+        {m.nextPage}
+      </button>
     </nav>
   );
 }

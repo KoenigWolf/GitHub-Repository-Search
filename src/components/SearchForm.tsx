@@ -4,33 +4,27 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/ui/search-input";
-import { Select } from "@/components/ui/select";
-import { GITHUB_API, SORT_VALUES, type SortValue } from "@/lib/constants";
+import { GITHUB_API } from "@/lib/constants";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
-import { normalizeSortParam } from "@/lib/validators";
 import { useSearchNavigation } from "@/hooks/useSearchNavigation";
 
 interface SearchFormProps {
   locale?: Locale;
   initialQuery?: string;
-  initialSort?: SortValue;
 }
 
 export function SearchForm({
   locale = DEFAULT_LOCALE,
   initialQuery = "",
-  initialSort = SORT_VALUES[0],
 }: SearchFormProps) {
   const { navigate, getParam, searchParams } = useSearchNavigation();
   const m = getMessages(locale);
 
   const [query, setQuery] = useState(initialQuery);
-  const [sort, setSort] = useState<SortValue>(initialSort);
 
   useEffect(() => {
     setQuery(getParam("q") ?? "");
-    setSort(normalizeSortParam(getParam("sort")));
   }, [searchParams, getParam]);
 
   const trimmedQuery = useMemo(() => query.trim(), [query]);
@@ -40,9 +34,9 @@ export function SearchForm({
       e.preventDefault();
       if (!trimmedQuery) return;
 
-      navigate({ q: trimmedQuery, sort, page: 1 });
+      navigate({ q: trimmedQuery, page: 1 });
     },
-    [trimmedQuery, sort, navigate]
+    [trimmedQuery, navigate]
   );
 
   const handleClear = useCallback(() => {
@@ -54,7 +48,7 @@ export function SearchForm({
       onSubmit={handleSubmit}
       role="search"
       aria-label={m.searchAriaLabel}
-      className="flex flex-col gap-4 sm:flex-row sm:items-center"
+      className="flex gap-2"
       suppressHydrationWarning
     >
       <SearchInput
@@ -66,26 +60,7 @@ export function SearchForm({
         maxLength={GITHUB_API.MAX_QUERY_LENGTH}
       />
 
-      <Select
-        value={sort}
-        onChange={(e) => setSort(normalizeSortParam(e.target.value))}
-        className="w-full sm:w-40"
-        aria-label={m.sortAriaLabel}
-      >
-        {SORT_VALUES.map((value) => (
-          <option key={value} value={value}>
-            {value === "best-match"
-              ? m.sortBestMatch
-              : value === "stars"
-                ? m.stars
-                : value === "forks"
-                  ? m.forks
-                  : m.updatedAt}
-          </option>
-        ))}
-      </Select>
-
-      <Button type="submit" disabled={!trimmedQuery}>
+      <Button type="submit" disabled={!trimmedQuery} className="shrink-0">
         <Search className="mr-2 h-4 w-4" />
         {m.searchButton}
       </Button>

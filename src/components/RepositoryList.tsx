@@ -1,8 +1,8 @@
 import { RepositoryCard } from "@/components/RepositoryCard";
 import { Pagination } from "@/components/Pagination";
+import { SearchResultsHeader } from "@/components/SearchResultsHeader";
 import type { GitHubRepository } from "@/lib/schemas/github";
-import { formatNumber } from "@/lib/utils";
-import { GITHUB_API } from "@/lib/constants";
+import { GITHUB_API, type SortValue } from "@/lib/constants";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 import { getMessages } from "@/lib/messages";
 
@@ -11,7 +11,7 @@ interface RepositoryListProps {
   totalCount: number;
   currentPage: number;
   totalPages: number;
-  query: string;
+  sort: SortValue;
   locale?: Locale;
   returnTo?: string;
 }
@@ -21,27 +21,25 @@ export function RepositoryList({
   totalCount,
   currentPage,
   totalPages,
-  query,
+  sort,
   locale = DEFAULT_LOCALE,
   returnTo,
 }: RepositoryListProps) {
   const m = getMessages(locale);
 
   return (
-    <div className="space-y-6">
-      <div className="text-sm text-muted-foreground">
-        &ldquo;{query}&rdquo; {m.searchResultSummary}: {formatNumber(totalCount, locale)}{" "}
-        {m.itemsSuffix}
-        {totalCount > GITHUB_API.MAX_SEARCH_RESULTS && (
-          <span className="ml-2 text-xs">
-            ({m.apiLimitPrefix}
-            {GITHUB_API.MAX_SEARCH_RESULTS.toLocaleString(locale)}
-            {m.apiLimitSuffix})
-          </span>
-        )}
-      </div>
+    <div className="space-y-4">
+      <SearchResultsHeader totalCount={totalCount} sort={sort} locale={locale} />
 
-      <ul className="space-y-4" role="list">
+      {totalCount > GITHUB_API.MAX_SEARCH_RESULTS && (
+        <p className="text-xs text-muted-foreground">
+          {m.apiLimitPrefix}
+          {GITHUB_API.MAX_SEARCH_RESULTS.toLocaleString(locale)}
+          {m.apiLimitSuffix}
+        </p>
+      )}
+
+      <ul role="list">
         {repositories.map((repo) => (
           <li key={repo.id}>
             <RepositoryCard

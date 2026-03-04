@@ -30,7 +30,7 @@ export const RepositoryTopics = memo(function RepositoryTopics({
       {showTitle && <h2 className="text-lg font-semibold">{m.topics}</h2>}
       <div className="flex flex-wrap gap-2">
         {displayTopics.map((topic) => (
-          <Badge key={topic} variant="secondary">
+          <Badge key={topic} variant="topic">
             {topic}
           </Badge>
         ))}

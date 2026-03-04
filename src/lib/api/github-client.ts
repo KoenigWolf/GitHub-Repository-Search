@@ -9,6 +9,7 @@ import {
   type SearchResult,
 } from "@/lib/schemas/github";
 import { GITHUB_API } from "@/lib/constants";
+import { parseSortValue } from "@/lib/validators";
 import { env, hasGitHubToken, isProduction } from "@/lib/env";
 
 export type GitHubApiErrorCode =
@@ -253,18 +254,19 @@ export async function searchRepositories(
   const {
     query,
     sort = "best-match",
-    order = "desc",
     page = 1,
     per_page = GITHUB_API.DEFAULT_PER_PAGE,
   } = parsedParams.data;
+
+  const { field, order } = parseSortValue(sort);
 
   const url = new URL(`${GITHUB_API.BASE_URL}${GITHUB_API.SEARCH_REPOS_ENDPOINT}`);
   url.searchParams.set("q", query);
   url.searchParams.set("page", String(page));
   url.searchParams.set("per_page", String(per_page));
 
-  if (sort !== "best-match") {
-    url.searchParams.set("sort", sort);
+  if (field) {
+    url.searchParams.set("sort", field);
     url.searchParams.set("order", order);
   }
 

@@ -22,9 +22,38 @@ export function normalizePageNumber(pageStr: string): number {
   return parsed;
 }
 
+const LEGACY_SORT_MAP: Record<string, SortValue> = {
+  stars: "stars-desc",
+  forks: "forks-desc",
+  updated: "updated-desc",
+};
+
 export function normalizeSortParam(value: string | null | undefined): SortValue {
-  if (value && SORT_VALUES.includes(value as SortValue)) {
+  if (!value) {
+    return "best-match";
+  }
+  if (SORT_VALUES.includes(value as SortValue)) {
     return value as SortValue;
   }
+  const legacyValue = LEGACY_SORT_MAP[value];
+  if (legacyValue) {
+    return legacyValue;
+  }
   return "best-match";
+}
+
+export type GitHubSortField = "stars" | "forks" | "updated";
+export type GitHubSortOrder = "asc" | "desc";
+
+export interface ParsedSort {
+  field: GitHubSortField | null;
+  order: GitHubSortOrder;
+}
+
+export function parseSortValue(value: SortValue): ParsedSort {
+  if (value === "best-match") {
+    return { field: null, order: "desc" };
+  }
+  const [field, order] = value.split("-") as [GitHubSortField, GitHubSortOrder];
+  return { field, order };
 }

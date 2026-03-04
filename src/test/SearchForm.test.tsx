@@ -70,31 +70,4 @@ describe("SearchForm", () => {
     expect(mockPush).not.toHaveBeenCalled();
   });
 
-  it("ソート変更が反映される", async () => {
-    const user = userEvent.setup();
-    render(<SearchForm />);
-
-    const select = screen.getByRole("combobox", { name: /並び替え/ });
-    await user.selectOptions(select, "stars");
-
-    expect(select).toHaveValue("stars");
-  });
-
-  it("ソート込みで送信するとsortパラメータがURLに含まれる", async () => {
-    const user = userEvent.setup();
-    render(<SearchForm />);
-
-    const input = screen.getByPlaceholderText(/リポジトリを検索/);
-    await user.type(input, "react");
-
-    const select = screen.getByRole("combobox", { name: /並び替え/ });
-    await user.selectOptions(select, "stars");
-
-    const button = screen.getByRole("button", { name: /^検索$/ });
-    await user.click(button);
-
-    expect(mockPush).toHaveBeenCalledWith(
-      expect.stringContaining("sort=stars")
-    );
-  });
 });

@@ -8,6 +8,28 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          "-apple-system",
+          "BlinkMacSystemFont",
+          '"Segoe UI"',
+          '"Noto Sans"',
+          "Helvetica",
+          "Arial",
+          "sans-serif",
+          '"Apple Color Emoji"',
+          '"Segoe UI Emoji"',
+        ],
+        mono: [
+          "ui-monospace",
+          "SFMono-Regular",
+          '"SF Mono"',
+          "Menlo",
+          "Consolas",
+          '"Liberation Mono"',
+          "monospace",
+        ],
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -42,6 +64,11 @@ const config: Config = {
         warning: {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
+        },
+        header: {
+          DEFAULT: "hsl(var(--header-bg))",
+          foreground: "hsl(var(--header-fg))",
+          border: "hsl(var(--header-border))",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
