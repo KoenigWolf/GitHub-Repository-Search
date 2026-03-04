@@ -7,7 +7,8 @@ type BadgeVariant =
   | "outline"
   | "destructive"
   | "success"
-  | "warning";
+  | "warning"
+  | "topic";
 
 interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: BadgeVariant;
@@ -20,6 +21,7 @@ const variantStyles: Record<BadgeVariant, string> = {
   destructive: "bg-destructive/10 text-destructive",
   success: "bg-success/10 text-success",
   warning: "bg-warning/10 text-warning",
+  topic: "bg-primary/15 text-primary",
 };
 
 const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
