@@ -43,7 +43,8 @@ type Result<T, E> = Success<T> | Failure<E>;
 // 使用例
 const result = await searchRepositories({ query });
 if (!result.success) {
-  return <ErrorPanel message={result.error.message} />;
+  const messageKey = ERROR_CODE_MESSAGE_KEYS[result.error.code];
+  return <ErrorPanel message={m[messageKey]} />;
 }
 const { data } = result;
 ```

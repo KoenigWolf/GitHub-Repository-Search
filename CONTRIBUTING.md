@@ -60,7 +60,10 @@ const [query, setQuery] = useState(initialQuery);
 
 ```typescript
 // ✅ Good: ブラウザ拡張機能による変更を許容
-// フォーム要素はパスワードマネージャー等が data-* 属性を追加する
+// html 要素: VS Code 拡張等が style 属性を追加する
+<html lang="ja" suppressHydrationWarning>
+
+// フォーム要素: パスワードマネージャー等が data-* 属性を追加する
 <form suppressHydrationWarning>
   <input suppressHydrationWarning />
   <select suppressHydrationWarning />
@@ -93,7 +96,8 @@ normalizeSortParam(getParam("sort") ?? undefined)
 // Good: Result 型で明示的に
 const result = await searchRepositories({ query });
 if (!result.success) {
-  return <ErrorPanel message={result.error.message} />;
+  const messageKey = ERROR_CODE_MESSAGE_KEYS[result.error.code];
+  return <ErrorPanel message={m[messageKey]} />;
 }
 
 // Bad: try-catch で握りつぶす
