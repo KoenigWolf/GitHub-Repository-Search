@@ -22,7 +22,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   destructive:
     "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80",
   outline:
-    "border border-border bg-secondary text-secondary-foreground hover:bg-accent active:bg-accent/80",
+    "border border-border bg-transparent text-foreground hover:bg-accent active:bg-accent/80",
   secondary:
     "border border-border bg-secondary text-secondary-foreground hover:bg-accent active:bg-accent/80",
   ghost:

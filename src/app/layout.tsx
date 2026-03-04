@@ -48,7 +48,7 @@ export default function RootLayout({
             <Link
               href="/search"
               className="flex items-center hover:opacity-80 transition-opacity"
-              aria-label="ホームに戻る"
+              aria-label={APP_NAME}
             >
               <GitHubLogo className="h-8 w-8" />
             </Link>
