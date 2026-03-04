@@ -55,6 +55,7 @@ export function SearchForm({
       role="search"
       aria-label={m.searchAriaLabel}
       className="flex flex-col gap-4 sm:flex-row sm:items-center"
+      suppressHydrationWarning
     >
       <SearchInput
         placeholder={m.searchPlaceholder}
