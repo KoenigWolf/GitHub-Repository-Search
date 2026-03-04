@@ -35,6 +35,19 @@ export function SearchForm({
 
   const trimmedQuery = useMemo(() => query.trim(), [query]);
 
+  const sortLabels = useMemo(
+    (): Record<SortValue, string> => ({
+      "best-match": m.sortBestMatch,
+      "stars-desc": m.sortMostStars,
+      "stars-asc": m.sortFewestStars,
+      "forks-desc": m.sortMostForks,
+      "forks-asc": m.sortFewestForks,
+      "updated-desc": m.sortRecentlyUpdated,
+      "updated-asc": m.sortLeastRecentlyUpdated,
+    }),
+    [m]
+  );
+
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
@@ -69,18 +82,12 @@ export function SearchForm({
       <Select
         value={sort}
         onChange={(e) => setSort(normalizeSortParam(e.target.value))}
-        className="w-full sm:w-40"
+        className="w-full sm:w-48"
         aria-label={m.sortAriaLabel}
       >
         {SORT_VALUES.map((value) => (
           <option key={value} value={value}>
-            {value === "best-match"
-              ? m.sortBestMatch
-              : value === "stars"
-                ? m.stars
-                : value === "forks"
-                  ? m.forks
-                  : m.updatedAt}
+            {sortLabels[value]}
           </option>
         ))}
       </Select>

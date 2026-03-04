@@ -40,7 +40,6 @@ export const SearchParamsSchema = z.object({
     .min(1, "Query is required")
     .max(GITHUB_API.MAX_QUERY_LENGTH, "Query is too long"),
   sort: z.enum(SORT_VALUES).default("best-match"),
-  order: z.enum(["asc", "desc"]).default("desc"),
   page: z.number().int().positive().default(1),
   per_page: z.number().int().min(1).max(100).default(30),
 });

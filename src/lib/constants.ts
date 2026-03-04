@@ -70,6 +70,14 @@ export const UI = {
   PAGINATION_DELTA: 1,
 } as const;
 
-export const SORT_VALUES = ["best-match", "stars", "forks", "updated"] as const;
+export const SORT_VALUES = [
+  "best-match",
+  "stars-desc",
+  "stars-asc",
+  "forks-desc",
+  "forks-asc",
+  "updated-desc",
+  "updated-asc",
+] as const;
 
 export type SortValue = (typeof SORT_VALUES)[number];
