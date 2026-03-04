@@ -92,18 +92,18 @@ const RETRY_CONFIG = {
   requestTimeoutMs: 10000,
 } as const;
 
-function isRetryableError(error: unknown): boolean {
-  if (error instanceof Error) {
-    const message = error.message.toLowerCase();
-    return (
-      error.name === "AbortError" ||
-      error.name === "TypeError" ||
-      message.includes("network") ||
-      message.includes("timeout") ||
-      message.includes("econnreset")
-    );
+function isRetryableError(error: unknown): error is Error {
+  if (!(error instanceof Error)) {
+    return false;
   }
-  return false;
+  const message = error.message.toLowerCase();
+  return (
+    error.name === "AbortError" ||
+    error.name === "TypeError" ||
+    message.includes("network") ||
+    message.includes("timeout") ||
+    message.includes("econnreset")
+  );
 }
 
 function isRetryableStatus(status: number): boolean {
@@ -180,20 +180,29 @@ async function validateResponse<T>(
   response: Response,
   schema: z.ZodType<T>
 ): Promise<Result<T, GitHubApiError>> {
+  let json: unknown;
   try {
-    const json = await response.json();
-    const parsed = schema.safeParse(json);
-
-    if (!parsed.success) {
-      return err(
-        createApiError("VALIDATION_ERROR", response.status, parsed.error.issues)
-      );
-    }
-
-    return ok(parsed.data);
-  } catch {
-    return err(createApiError("VALIDATION_ERROR", response.status));
+    json = await response.json();
+  } catch (e) {
+    return err(
+      createApiError("VALIDATION_ERROR", response.status, {
+        type: "JSON_PARSE_ERROR",
+        message: e instanceof Error ? e.message : "Failed to parse JSON",
+      })
+    );
   }
+
+  const parsed = schema.safeParse(json);
+  if (!parsed.success) {
+    return err(
+      createApiError("VALIDATION_ERROR", response.status, {
+        type: "SCHEMA_VALIDATION_ERROR",
+        issues: parsed.error.issues,
+      })
+    );
+  }
+
+  return ok(parsed.data);
 }
 
 async function handleApiResponse<T>(

@@ -37,8 +37,8 @@ export type GitHubSearchResponse = z.infer<typeof GitHubSearchResponseSchema>;
 export const SearchParamsSchema = z.object({
   query: z
     .string()
-    .min(1, "検索クエリは必須です")
-    .max(GITHUB_API.MAX_QUERY_LENGTH, "検索クエリが長すぎます"),
+    .min(1, "Query is required")
+    .max(GITHUB_API.MAX_QUERY_LENGTH, "Query is too long"),
   sort: z.enum(SORT_VALUES).default("best-match"),
   order: z.enum(["asc", "desc"]).default("desc"),
   page: z.number().int().positive().default(1),

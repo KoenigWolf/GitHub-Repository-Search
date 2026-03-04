@@ -10,6 +10,15 @@ type EnvType = z.infer<typeof envSchema>;
 let cachedEnv: EnvType | null = null;
 
 function parseEnv(): EnvType {
+  if (process.env.NODE_ENV === "test") {
+    const result = envSchema.safeParse(process.env);
+    if (!result.success) {
+      console.error("Invalid environment variables:", result.error.flatten().fieldErrors);
+      throw new Error("Invalid environment variables");
+    }
+    return result.data;
+  }
+
   if (cachedEnv) return cachedEnv;
 
   const result = envSchema.safeParse(process.env);
@@ -18,10 +27,7 @@ function parseEnv(): EnvType {
     throw new Error("Invalid environment variables");
   }
 
-  if (process.env.NODE_ENV === "production") {
-    cachedEnv = result.data;
-  }
-
+  cachedEnv = result.data;
   return result.data;
 }
 
