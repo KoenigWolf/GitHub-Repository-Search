@@ -59,7 +59,9 @@ export const RepositoryCard = memo(function RepositoryCard({
       </Link>
 
       {description && (
-        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+          {description}
+        </p>
       )}
 
       {topics.length > 0 && (
