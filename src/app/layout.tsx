@@ -43,6 +43,12 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body className="font-sans antialiased min-h-screen">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-background focus:p-4 focus:text-foreground"
+        >
+          メインコンテンツへスキップ
+        </a>
         <header className="bg-header text-header-foreground">
           <div className="container mx-auto flex items-center gap-4 px-4 py-3">
             <Link
@@ -55,7 +61,9 @@ export default function RootLayout({
             </Link>
           </div>
         </header>
-        <main className="container mx-auto px-4 py-6">{children}</main>
+        <main id="main-content" className="container mx-auto px-4 py-6">
+          {children}
+        </main>
       </body>
     </html>
   );

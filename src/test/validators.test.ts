@@ -4,6 +4,7 @@ import {
   normalizePageNumber,
   normalizeSortParam,
   parseSortValue,
+  isValidReturnPath,
 } from "@/lib/validators";
 
 describe("normalizeQuery", () => {
@@ -113,5 +114,36 @@ describe("parseSortValue", () => {
     const result = parseSortValue("updated-asc");
     expect(result.field).toBe("updated");
     expect(result.order).toBe("asc");
+  });
+});
+
+describe("isValidReturnPath", () => {
+  it("有効な相対パスを受け入れる", () => {
+    expect(isValidReturnPath("/search")).toBe(true);
+    expect(isValidReturnPath("/search?q=react")).toBe(true);
+    expect(isValidReturnPath("/repositories/owner/repo")).toBe(true);
+  });
+
+  it("null と undefined を拒否する", () => {
+    expect(isValidReturnPath(null)).toBe(false);
+    expect(isValidReturnPath(undefined)).toBe(false);
+  });
+
+  it("空文字列を拒否する", () => {
+    expect(isValidReturnPath("")).toBe(false);
+  });
+
+  it("スラッシュで始まらないパスを拒否する", () => {
+    expect(isValidReturnPath("search")).toBe(false);
+    expect(isValidReturnPath("http://example.com")).toBe(false);
+  });
+
+  it("プロトコル相対URLを拒否する（オープンリダイレクト防止）", () => {
+    expect(isValidReturnPath("//evil.com")).toBe(false);
+    expect(isValidReturnPath("//evil.com/path")).toBe(false);
+  });
+
+  it("絶対URLを拒否する", () => {
+    expect(isValidReturnPath("https://evil.com/search")).toBe(false);
   });
 });

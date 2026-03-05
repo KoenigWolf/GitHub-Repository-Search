@@ -22,6 +22,24 @@ export function normalizePageNumber(pageStr: string): number {
   return parsed;
 }
 
+export function isValidReturnPath(path: string | null | undefined): path is string {
+  if (!path) {
+    return false;
+  }
+  if (!path.startsWith("/")) {
+    return false;
+  }
+  if (path.startsWith("//")) {
+    return false;
+  }
+  try {
+    const url = new URL(path, "http://localhost");
+    return url.pathname === path.split("?")[0];
+  } catch {
+    return false;
+  }
+}
+
 const LEGACY_SORT_MAP: Record<string, SortValue> = {
   stars: "stars-desc",
   forks: "forks-desc",
@@ -42,18 +60,24 @@ export function normalizeSortParam(value: string | null | undefined): SortValue 
   return "best-match";
 }
 
-export type GitHubSortField = "stars" | "forks" | "updated";
-export type GitHubSortOrder = "asc" | "desc";
+type GitHubSortField = "stars" | "forks" | "updated";
+type GitHubSortOrder = "asc" | "desc";
 
-export interface ParsedSort {
+interface ParsedSort {
   field: GitHubSortField | null;
   order: GitHubSortOrder;
 }
 
+const SORT_VALUE_MAP: Record<SortValue, ParsedSort> = {
+  "best-match": { field: null, order: "desc" },
+  "stars-desc": { field: "stars", order: "desc" },
+  "stars-asc": { field: "stars", order: "asc" },
+  "forks-desc": { field: "forks", order: "desc" },
+  "forks-asc": { field: "forks", order: "asc" },
+  "updated-desc": { field: "updated", order: "desc" },
+  "updated-asc": { field: "updated", order: "asc" },
+};
+
 export function parseSortValue(value: SortValue): ParsedSort {
-  if (value === "best-match") {
-    return { field: null, order: "desc" };
-  }
-  const [field, order] = value.split("-") as [GitHubSortField, GitHubSortOrder];
-  return { field, order };
+  return SORT_VALUE_MAP[value];
 }
