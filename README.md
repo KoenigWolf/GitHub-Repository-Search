@@ -65,6 +65,11 @@ npm run build
 - **ユーティリティ**: clsx, tailwind-merge
 - **国際化**: 独自実装（日本語 / 英語）
 
+## ドキュメント
+
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - 実装パターンとコード規約
+- [DESIGN_PHILOSOPHY.md](./DESIGN_PHILOSOPHY.md) - 設計原則と判断基準
+
 ## アーキテクチャ
 
 ```text
