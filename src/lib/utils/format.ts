@@ -1,13 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { DEFAULT_LOCALE, getLocaleConfig, type Locale } from "./locale";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-export const formInputBase =
-  "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
+import { DEFAULT_LOCALE, getLocaleConfig, type Locale } from "@/lib/i18n";
 
 export function formatNumber(num: number, locale?: Locale): string {
   const targetLocale = locale ?? DEFAULT_LOCALE;

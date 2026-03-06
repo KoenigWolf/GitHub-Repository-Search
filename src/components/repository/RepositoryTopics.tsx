@@ -1,8 +1,7 @@
 import { memo } from "react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui";
 import { UI } from "@/lib/constants";
-import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
-import { getMessages } from "@/lib/messages";
+import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 
 interface RepositoryTopicsProps {
   topics: string[];

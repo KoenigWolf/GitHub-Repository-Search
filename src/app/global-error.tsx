@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ErrorPanel } from "@/components/ErrorPanel";
-import { resolveLocale, type Locale, DEFAULT_LOCALE } from "@/lib/locale";
-import { getMessages } from "@/lib/messages";
+import { Button } from "@/components/ui";
+import { ErrorPanel } from "@/components/common";
+import { resolveLocale, type Locale, DEFAULT_LOCALE, getMessages } from "@/lib/i18n";
 
 interface GlobalErrorProps {
   error: Error & { digest?: string };

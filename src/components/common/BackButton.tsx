@@ -2,9 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
-import { getMessages } from "@/lib/messages";
+import { Button } from "@/components/ui";
+import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 
 interface BackButtonProps {
   fallbackHref?: string;

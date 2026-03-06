@@ -1,10 +1,9 @@
-import { RepositoryCard } from "@/components/RepositoryCard";
-import { Pagination } from "@/components/Pagination";
-import { SearchResultsHeader } from "@/components/SearchResultsHeader";
-import type { GitHubRepository } from "@/lib/schemas/github";
+import { RepositoryCard } from "./RepositoryCard";
+import { Pagination } from "@/components/common";
+import { SearchResultsHeader } from "@/components/search";
+import type { GitHubRepository } from "@/lib/schemas";
 import { GITHUB_API, type SortValue } from "@/lib/constants";
-import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
-import { getMessages } from "@/lib/messages";
+import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 
 interface RepositoryListProps {
   repositories: GitHubRepository[];

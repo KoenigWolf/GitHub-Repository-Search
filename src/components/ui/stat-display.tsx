@@ -2,7 +2,7 @@ import { memo } from "react";
 import { type LucideIcon } from "lucide-react";
 import { IconText } from "@/components/ui/icon-text";
 import { formatNumber } from "@/lib/utils";
-import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n";
 
 interface StatDisplayProps {
   icon: LucideIcon;

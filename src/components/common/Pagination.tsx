@@ -1,11 +1,9 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
-import { calculatePageNumbers } from "@/lib/pagination";
-import { useSearchNavigation } from "@/hooks/useSearchNavigation";
-import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
-import { getMessages } from "@/lib/messages";
-import { cn } from "@/lib/utils";
+import { calculatePageNumbers, cn } from "@/lib/utils";
+import { useSearchNavigation } from "@/hooks";
+import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 
 interface PaginationProps {
   currentPage: number;

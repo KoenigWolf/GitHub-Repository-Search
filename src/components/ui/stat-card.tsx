@@ -2,7 +2,7 @@ import { memo } from "react";
 import type { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { cn, formatNumber } from "@/lib/utils";
-import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n";
 
 interface StatCardProps {
   icon: LucideIcon;

@@ -1,9 +1,8 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { UI } from "@/lib/constants";
-import { Card } from "@/components/ui/card";
-import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
-import { getMessages } from "@/lib/messages";
+import { Card } from "@/components/ui";
+import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 
 interface SkeletonProps {
   className?: string;

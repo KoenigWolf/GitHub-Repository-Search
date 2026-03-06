@@ -1,7 +1,6 @@
 import { memo } from "react";
 import Image from "next/image";
-import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
-import { getMessages } from "@/lib/messages";
+import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 
 interface OwnerAvatarProps {
   login: string;

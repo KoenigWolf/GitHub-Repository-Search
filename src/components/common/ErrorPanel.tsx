@@ -1,7 +1,6 @@
 import { AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
-import { getMessages } from "@/lib/messages";
+import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 
 interface ErrorPanelProps {
   title?: string;

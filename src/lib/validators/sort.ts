@@ -1,44 +1,4 @@
-import { GITHUB_API, SORT_VALUES, type SortValue } from "@/lib/constants";
-
-export function normalizeParam(value: string | string[] | undefined): string | undefined {
-  if (Array.isArray(value)) {
-    return value[0];
-  }
-  return value;
-}
-
-export function normalizeQuery(query: string): string {
-  return query
-    .trim()
-    .replace(/\s+/g, " ")
-    .slice(0, GITHUB_API.MAX_QUERY_LENGTH);
-}
-
-export function normalizePageNumber(pageStr: string): number {
-  const parsed = parseInt(pageStr, 10);
-  if (Number.isNaN(parsed) || parsed < 1) {
-    return 1;
-  }
-  return parsed;
-}
-
-export function isValidReturnPath(path: string | null | undefined): path is string {
-  if (!path) {
-    return false;
-  }
-  if (!path.startsWith("/")) {
-    return false;
-  }
-  if (path.startsWith("//")) {
-    return false;
-  }
-  try {
-    const url = new URL(path, "http://localhost");
-    return url.pathname === path.split("?")[0];
-  } catch {
-    return false;
-  }
-}
+import { SORT_VALUES, type SortValue } from "@/lib/constants";
 
 const LEGACY_SORT_MAP: Record<string, SortValue> = {
   stars: "stars-desc",
@@ -63,7 +23,7 @@ export function normalizeSortParam(value: string | null | undefined): SortValue 
 type GitHubSortField = "stars" | "forks" | "updated";
 type GitHubSortOrder = "asc" | "desc";
 
-interface ParsedSort {
+export interface ParsedSort {
   field: GitHubSortField | null;
   order: GitHubSortOrder;
 }

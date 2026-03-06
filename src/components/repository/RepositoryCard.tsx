@@ -1,14 +1,11 @@
 import { memo } from "react";
 import Link from "next/link";
 import { Star, GitFork, Calendar } from "lucide-react";
-import { IconText } from "@/components/ui/icon-text";
-import { LanguageBadge } from "@/components/ui/language-badge";
-import { StatDisplay } from "@/components/ui/stat-display";
-import { RepositoryTopics } from "@/components/RepositoryTopics";
-import type { GitHubRepository } from "@/lib/schemas/github";
+import { IconText, LanguageBadge, StatDisplay } from "@/components/ui";
+import { RepositoryTopics } from "./RepositoryTopics";
+import type { GitHubRepository } from "@/lib/schemas";
 import { formatDate } from "@/lib/utils";
-import { DEFAULT_LOCALE, type Locale, toLangParam } from "@/lib/locale";
-import { getMessages } from "@/lib/messages";
+import { DEFAULT_LOCALE, type Locale, toLangParam, getMessages } from "@/lib/i18n";
 import { isValidReturnPath } from "@/lib/validators";
 
 interface RepositoryCardProps {

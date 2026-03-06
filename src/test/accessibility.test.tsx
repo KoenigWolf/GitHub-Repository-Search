@@ -2,11 +2,9 @@ import type { ReactElement } from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { axe } from "vitest-axe";
-import { SearchForm } from "@/components/SearchForm";
-import { RepositoryCard } from "@/components/RepositoryCard";
-import { ErrorPanel } from "@/components/ErrorPanel";
-import { EmptyState } from "@/components/EmptyState";
-import { Pagination } from "@/components/Pagination";
+import { SearchForm } from "@/components/search";
+import { RepositoryCard } from "@/components/repository";
+import { ErrorPanel, EmptyState, Pagination } from "@/components/common";
 import { mockRepository } from "./fixtures";
 import { Github } from "lucide-react";
 

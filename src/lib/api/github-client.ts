@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { type Result, ok, err } from "@/lib/result";
+import { type Result, ok, err } from "@/lib/utils";
 import {
   GitHubRepositorySchema,
   GitHubSearchResponseSchema,
@@ -7,7 +7,7 @@ import {
   type GitHubRepository,
   type SearchParamsInput,
   type SearchResult,
-} from "@/lib/schemas/github";
+} from "@/lib/schemas";
 import { GITHUB_API } from "@/lib/constants";
 import { parseSortValue } from "@/lib/validators";
 import { env, hasGitHubToken, isProduction } from "@/lib/env";
