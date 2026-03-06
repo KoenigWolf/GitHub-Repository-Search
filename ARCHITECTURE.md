@@ -77,13 +77,21 @@ const page = normalizePageNumber(normalizeParam(params.page) ?? "1");
 src/
 ├── app/                    # ページ（Server Components）
 ├── components/             # 再利用可能なコンポーネント
+│   ├── common/             # 共通コンポーネント（ErrorPanel, Pagination など）
+│   ├── repository/         # リポジトリ関連（RepositoryCard, OwnerAvatar など）
+│   ├── search/             # 検索関連（SearchForm, SearchResultsHeader）
 │   └── ui/                 # プリミティブ UI コンポーネント
 ├── hooks/                  # カスタムフック
 ├── lib/                    # ユーティリティ・ドメインロジック
 │   ├── api/                # 外部 API クライアント
-│   └── schemas/            # Zod スキーマ
+│   ├── i18n/               # 国際化（ロケール、メッセージ）
+│   ├── schemas/            # Zod スキーマ
+│   ├── utils/              # ユーティリティ関数
+│   └── validators/         # 入力値検証・正規化
 └── test/                   # テスト
 ```
+
+各ディレクトリには `index.ts`（バレルエクスポート）を配置し、インポートを簡潔に:
 
 ## Component Design
 
