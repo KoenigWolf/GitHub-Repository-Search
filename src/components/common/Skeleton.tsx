@@ -65,7 +65,7 @@ function RepositoryCardSkeleton() {
 }
 
 interface SkeletonComponentProps {
-  locale?: Locale;
+  locale?: Locale | undefined;
 }
 
 export function SearchResultsSkeleton({ locale }: SkeletonComponentProps = {}) {
