@@ -43,8 +43,10 @@ describe("normalizePageNumber", () => {
     expect(normalizePageNumber("-1")).toBe(1);
   });
 
-  it("小数は整数部分を使用", () => {
-    expect(normalizePageNumber("3.7")).toBe(3);
+  it("小数や不正な形式は1を返す", () => {
+    expect(normalizePageNumber("3.7")).toBe(1);
+    expect(normalizePageNumber("2foo")).toBe(1);
+    expect(normalizePageNumber("01")).toBe(1);
   });
 });
 

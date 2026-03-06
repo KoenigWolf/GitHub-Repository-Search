@@ -14,10 +14,11 @@ export function normalizeQuery(query: string): string {
     .slice(0, GITHUB_API.MAX_QUERY_LENGTH);
 }
 
+const POSITIVE_INTEGER_REGEX = /^[1-9]\d*$/;
+
 export function normalizePageNumber(pageStr: string): number {
-  const parsed = parseInt(pageStr, 10);
-  if (Number.isNaN(parsed) || parsed < 1) {
+  if (!POSITIVE_INTEGER_REGEX.test(pageStr)) {
     return 1;
   }
-  return parsed;
+  return Number(pageStr);
 }
