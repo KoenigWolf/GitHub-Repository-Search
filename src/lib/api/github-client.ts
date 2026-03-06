@@ -7,7 +7,7 @@ import {
   type GitHubRepository,
   type SearchParamsInput,
   type SearchResult,
-} from "@/lib/schemas/github";
+} from "@/lib/schemas";
 import { GITHUB_API } from "@/lib/constants";
 import { parseSortValue } from "@/lib/validators";
 import { env, hasGitHubToken, isProduction } from "@/lib/env";

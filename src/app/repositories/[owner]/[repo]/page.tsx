@@ -13,11 +13,7 @@ import {
   Lock,
   Globe,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { IconText } from "@/components/ui/icon-text";
-import { StatCard } from "@/components/ui/stat-card";
+import { Badge, buttonVariants, Card, IconText, StatCard } from "@/components/ui";
 import { BackButton, ErrorPanel, RepositoryDetailSkeleton } from "@/components/common";
 import { OwnerAvatar, RepositoryTopics } from "@/components/repository";
 import { getRepository, ERROR_CODE_MESSAGE_KEYS } from "@/lib/api/github-client";

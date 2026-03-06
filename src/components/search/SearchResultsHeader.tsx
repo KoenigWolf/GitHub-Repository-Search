@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
-import { Select } from "@/components/ui/select";
+import { Select } from "@/components/ui";
 import { SORT_VALUES, type SortValue } from "@/lib/constants";
 import { formatNumber } from "@/lib/utils";
 import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 import { normalizeSortParam } from "@/lib/validators";
-import { useSearchNavigation } from "@/hooks/useSearchNavigation";
+import { useSearchNavigation } from "@/hooks";
 
 interface SearchResultsHeaderProps {
   totalCount: number;

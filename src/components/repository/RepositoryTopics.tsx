@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui";
 import { UI } from "@/lib/constants";
 import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 

@@ -3,7 +3,7 @@
 import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui";
 import { ErrorPanel } from "@/components/common";
 import { resolveLocale, DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 

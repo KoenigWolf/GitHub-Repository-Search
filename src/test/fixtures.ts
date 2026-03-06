@@ -1,4 +1,4 @@
-import type { GitHubRepository, GitHubSearchResponse } from "@/lib/schemas/github";
+import type { GitHubRepository, GitHubSearchResponse } from "@/lib/schemas";
 
 export const mockRepository: GitHubRepository = {
   id: 10270250,

@@ -1,7 +1,7 @@
 import { RepositoryCard } from "./RepositoryCard";
 import { Pagination } from "@/components/common";
 import { SearchResultsHeader } from "@/components/search";
-import type { GitHubRepository } from "@/lib/schemas/github";
+import type { GitHubRepository } from "@/lib/schemas";
 import { GITHUB_API, type SortValue } from "@/lib/constants";
 import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 

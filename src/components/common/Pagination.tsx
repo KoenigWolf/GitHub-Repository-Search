@@ -2,7 +2,7 @@
 
 import { useMemo, useCallback } from "react";
 import { calculatePageNumbers } from "@/lib/utils";
-import { useSearchNavigation } from "@/hooks/useSearchNavigation";
+import { useSearchNavigation } from "@/hooks";
 import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 

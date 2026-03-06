@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui";
 import { resolveLocale, toLangParam, DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 
 function NotFoundView({ locale }: { locale: Locale }) {

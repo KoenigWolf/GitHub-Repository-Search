@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui";
 import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
 
 interface BackButtonProps {

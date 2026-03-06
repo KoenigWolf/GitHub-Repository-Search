@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { RotateCcw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui";
 import { ErrorPanel } from "@/components/common";
 import { resolveLocale, type Locale, DEFAULT_LOCALE, getMessages } from "@/lib/i18n";
 

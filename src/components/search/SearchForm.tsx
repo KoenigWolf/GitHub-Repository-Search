@@ -2,11 +2,10 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { SearchInput } from "@/components/ui/search-input";
+import { Button, SearchInput } from "@/components/ui";
 import { GITHUB_API } from "@/lib/constants";
 import { DEFAULT_LOCALE, type Locale, getMessages } from "@/lib/i18n";
-import { useSearchNavigation } from "@/hooks/useSearchNavigation";
+import { useSearchNavigation } from "@/hooks";
 
 interface SearchFormProps {
   locale?: Locale;
