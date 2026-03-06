@@ -126,6 +126,52 @@ GitHub API との通信で発生しうるエラーを 6 種類に分類し、そ
 
 **参照**: `src/lib/env.ts`
 
+### null / undefined の扱い
+
+**暗黙処理せず、妥当性を判断する**
+
+null/undefined は「有効な状態」か「前提違反」かを明確に区別し、型シグネチャで意図を表明します。
+
+| 分類 | 意味 | 型シグネチャ | 処理責任 |
+|------|------|--------------|----------|
+| 有効な状態 | 値がないことに意味がある | `string \| null \| undefined` | 関数内でデフォルト値を返す |
+| 前提違反 | 呼び出し側のバグ | `string` | 呼び出し側がフォールバックを提供 |
+
+**有効な状態の例:**
+
+| 関数/フィールド | 理由 |
+|-----------------|------|
+| `normalizeSortParam(value: string \| null \| undefined)` | パラメータ未指定は「デフォルトソート」を意味 |
+| `isValidReturnPath(path: string \| null \| undefined)` | パス未指定は「戻り先なし」を意味 |
+| `repository.description: string \| null` | GitHub API が null を返す（説明なし） |
+| `env.GITHUB_TOKEN: string \| undefined` | トークン未設定は許容される運用形態 |
+
+**前提違反の例:**
+
+| 関数 | 理由 | 呼び出し側の責任 |
+|------|------|------------------|
+| `normalizeQuery(query: string)` | 空文字は許容するが undefined は想定外 | `normalizeParam(params.q) ?? ""` |
+| `normalizePageNumber(pageStr: string)` | 文字列として受け取る前提 | `normalizeParam(params.page) ?? "1"` |
+
+**判断基準:**
+
+1. **外部入力（API レスポンス、URL パラメータ）**: null/undefined は有効な状態として扱う
+2. **内部関数間の受け渡し**: 前提違反として扱い、呼び出し側でフォールバック
+3. **オプショナル Props**: デフォルト値を destructuring で提供
+
+**exactOptionalPropertyTypes との関係:**
+
+`exactOptionalPropertyTypes: true` が有効なため、Props の型定義では `?` と `| undefined` の意味が異なります。
+
+| 型定義 | 許容する呼び出し |
+|--------|-----------------|
+| `prop?: string` | `{}` または `{ prop: "value" }` |
+| `prop?: string \| undefined` | `{}` または `{ prop: "value" }` または `{ prop: undefined }` |
+
+呼び出し側が `{ digest: error.digest }` のように `undefined` を明示的に渡す場合、受け取り側は `digest?: string | undefined` と宣言する必要があります。
+
+**参照**: `src/lib/validators/`
+
 ---
 
 ## 国際化（i18n）
@@ -250,6 +296,7 @@ src/
 |------|------|
 | 型ファースト | Zod スキーマから型を導出し、実行時と型の整合性を保証 |
 | 明示的エラー | Result 型で例外を使わず、エラーパスを可視化 |
+| null/undefined | 有効な状態か前提違反かを型で明示し、暗黙処理しない |
 | URL 状態管理 | 共有可能・履歴対応・SSR 親和性を実現 |
 | アクセシビリティ | 設計段階から組み込み、自動テストで担保 |
 | パフォーマンス | Suspense・キャッシュ・メモ化で体感速度向上 |
