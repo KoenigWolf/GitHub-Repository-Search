@@ -1,13 +1,13 @@
 import type { Locale } from "../locale";
-import { jaMessages } from "./ja";
+import { jaMessages, type MessageKeys } from "./ja";
 import { enMessages } from "./en";
 
-const messages = {
+const messages: Record<Locale, Record<MessageKeys, string>> = {
   "ja-JP": jaMessages,
   "en-US": enMessages,
-} as const;
+};
 
-export function getMessages(locale: Locale) {
+export function getMessages(locale: Locale): Record<MessageKeys, string> {
   return messages[locale];
 }
 
