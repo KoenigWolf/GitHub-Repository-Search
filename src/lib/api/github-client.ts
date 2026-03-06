@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { type Result, ok, err } from "@/lib/result";
+import { type Result, ok, err } from "@/lib/utils";
 import {
   GitHubRepositorySchema,
   GitHubSearchResponseSchema,

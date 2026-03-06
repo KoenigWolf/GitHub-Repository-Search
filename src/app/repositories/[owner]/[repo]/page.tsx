@@ -18,15 +18,11 @@ import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { IconText } from "@/components/ui/icon-text";
 import { StatCard } from "@/components/ui/stat-card";
-import { BackButton } from "@/components/BackButton";
-import { ErrorPanel } from "@/components/ErrorPanel";
-import { OwnerAvatar } from "@/components/OwnerAvatar";
-import { RepositoryTopics } from "@/components/RepositoryTopics";
-import { RepositoryDetailSkeleton } from "@/components/Skeleton";
+import { BackButton, ErrorPanel, RepositoryDetailSkeleton } from "@/components/common";
+import { OwnerAvatar, RepositoryTopics } from "@/components/repository";
 import { getRepository, ERROR_CODE_MESSAGE_KEYS } from "@/lib/api/github-client";
 import { APP_NAME } from "@/lib/constants";
-import { resolveLocale, toLangParam, type Locale } from "@/lib/locale";
-import { getMessages } from "@/lib/messages";
+import { resolveLocale, toLangParam, type Locale, getMessages } from "@/lib/i18n";
 import { formatDate } from "@/lib/utils";
 import { normalizeParam, isValidReturnPath } from "@/lib/validators";
 

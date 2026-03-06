@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { BackButton } from "@/components/BackButton";
+import { BackButton } from "@/components/common";
 
 const mockBack = vi.fn();
 const mockPush = vi.fn();

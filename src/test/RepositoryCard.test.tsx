@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { RepositoryCard } from "@/components/RepositoryCard";
+import { RepositoryCard } from "@/components/repository";
 import { mockRepository } from "./fixtures";
 import type { GitHubRepository } from "@/lib/schemas/github";
 

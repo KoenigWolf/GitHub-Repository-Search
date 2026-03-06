@@ -1,15 +1,17 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Github } from "lucide-react";
-import { SearchForm } from "@/components/SearchForm";
-import { RepositoryList } from "@/components/RepositoryList";
-import { SearchResultsSkeleton, SearchFormSkeleton } from "@/components/Skeleton";
-import { ErrorPanel } from "@/components/ErrorPanel";
-import { EmptyState } from "@/components/EmptyState";
+import { SearchForm } from "@/components/search";
+import { RepositoryList } from "@/components/repository";
+import {
+  SearchResultsSkeleton,
+  SearchFormSkeleton,
+  ErrorPanel,
+  EmptyState,
+} from "@/components/common";
 import { searchRepositories, ERROR_CODE_MESSAGE_KEYS } from "@/lib/api/github-client";
 import { APP_NAME, GITHUB_API, type SortValue } from "@/lib/constants";
-import { resolveLocale, toLangParam, type Locale } from "@/lib/locale";
-import { getMessages } from "@/lib/messages";
+import { resolveLocale, toLangParam, type Locale, getMessages } from "@/lib/i18n";
 import {
   normalizeParam,
   normalizeQuery,

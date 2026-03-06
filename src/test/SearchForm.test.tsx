@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SearchForm } from "@/components/SearchForm";
+import { SearchForm } from "@/components/search";
 
 const mockPush = vi.fn();
 const mockSearchParams = new URLSearchParams();

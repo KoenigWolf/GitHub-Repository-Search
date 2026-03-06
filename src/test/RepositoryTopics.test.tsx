@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { RepositoryTopics } from "@/components/RepositoryTopics";
+import { RepositoryTopics } from "@/components/repository";
 
 describe("RepositoryTopics", () => {
   it("トピックが空の場合はnullを返す", () => {

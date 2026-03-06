@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculatePageNumbers } from "@/lib/pagination";
+import { calculatePageNumbers } from "@/lib/utils";
 
 describe("calculatePageNumbers", () => {
   it("totalPages が 1 以下の場合は空配列を返す", () => {
