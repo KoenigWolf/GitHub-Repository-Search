@@ -65,6 +65,11 @@ npm run build
 - **ユーティリティ**: clsx, tailwind-merge
 - **国際化**: 独自実装（日本語 / 英語）
 
+## ドキュメント
+
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - 実装パターンとコード規約
+- [DESIGN_PHILOSOPHY.md](./DESIGN_PHILOSOPHY.md) - 設計原則と判断基準
+
 ## アーキテクチャ
 
 ```text
@@ -84,43 +89,64 @@ src/
 │   └── repositories/[owner]/[repo]/
 │       └── page.tsx                 # リポジトリ詳細ページ
 ├── components/
-│   ├── ui/                          # 汎用 UI コンポーネント
-│   │   ├── badge.tsx
-│   │   ├── button.tsx               # buttonVariants 関数含む
-│   │   ├── card.tsx                 # 汎用カードコンポーネント
-│   │   ├── icon-text.tsx            # アイコン+テキストパターン
-│   │   ├── input.tsx
-│   │   ├── language-badge.tsx       # 言語バッジ
-│   │   ├── search-input.tsx         # 検索入力コンポーネント
-│   │   ├── select.tsx
-│   │   ├── stat-card.tsx            # 統計情報カード
-│   │   └── stat-display.tsx         # 統計表示コンポーネント
-│   ├── BackButton.tsx               # 戻るボタン（Client Component）
-│   ├── EmptyState.tsx               # 空状態表示
-│   ├── ErrorPanel.tsx               # エラー表示パネル
-│   ├── OwnerAvatar.tsx              # オーナーアバター表示
-│   ├── Pagination.tsx               # ページネーション（Client Component）
-│   ├── RepositoryCard.tsx           # リポジトリカード
-│   ├── RepositoryList.tsx           # リポジトリ一覧
-│   ├── RepositoryTopics.tsx         # トピックタグ表示
-│   ├── SearchForm.tsx               # 検索フォーム（Client Component）
-│   ├── SearchResultsHeader.tsx      # 検索結果ヘッダー（結果数+ソート）
-│   └── Skeleton.tsx                 # ローディングスケルトン
+│   ├── common/                      # 共通コンポーネント
+│   │   ├── index.ts                 # バレルエクスポート
+│   │   ├── BackButton.tsx           # 戻るボタン（Client Component）
+│   │   ├── EmptyState.tsx           # 空状態表示
+│   │   ├── ErrorPanel.tsx           # エラー表示パネル
+│   │   ├── Pagination.tsx           # ページネーション（Client Component）
+│   │   └── Skeleton.tsx             # ローディングスケルトン
+│   ├── repository/                  # リポジトリ関連コンポーネント
+│   │   ├── index.ts                 # バレルエクスポート
+│   │   ├── OwnerAvatar.tsx          # オーナーアバター表示
+│   │   ├── RepositoryCard.tsx       # リポジトリカード
+│   │   ├── RepositoryList.tsx       # リポジトリ一覧
+│   │   └── RepositoryTopics.tsx     # トピックタグ表示
+│   ├── search/                      # 検索関連コンポーネント
+│   │   ├── index.ts                 # バレルエクスポート
+│   │   ├── SearchForm.tsx           # 検索フォーム（Client Component）
+│   │   └── SearchResultsHeader.tsx  # 検索結果ヘッダー（結果数+ソート）
+│   └── ui/                          # 汎用 UI コンポーネント
+│       ├── index.ts                 # バレルエクスポート
+│       ├── badge.tsx
+│       ├── button.tsx               # buttonVariants 関数含む
+│       ├── card.tsx                 # 汎用カードコンポーネント
+│       ├── icon-text.tsx            # アイコン+テキストパターン
+│       ├── input.tsx
+│       ├── language-badge.tsx       # 言語バッジ
+│       ├── search-input.tsx         # 検索入力コンポーネント
+│       ├── select.tsx
+│       ├── stat-card.tsx            # 統計情報カード
+│       └── stat-display.tsx         # 統計表示コンポーネント
 ├── hooks/
+│   ├── index.ts                     # バレルエクスポート
 │   └── useSearchNavigation.ts       # 検索ナビゲーション用フック
 ├── lib/
 │   ├── api/
 │   │   └── github-client.ts         # GitHub API クライアント（Result型）
+│   ├── i18n/                        # 国際化（多言語対応）
+│   │   ├── index.ts                 # バレルエクスポート
+│   │   ├── locale.ts                # ロケール設定・ユーティリティ
+│   │   └── messages/
+│   │       ├── index.ts             # メッセージバレルエクスポート
+│   │       ├── ja.ts                # 日本語メッセージ
+│   │       └── en.ts                # 英語メッセージ
 │   ├── schemas/
+│   │   ├── index.ts                 # バレルエクスポート
 │   │   └── github.ts                # Zod スキーマ・型定義
+│   ├── utils/                       # ユーティリティ関数
+│   │   ├── index.ts                 # バレルエクスポート
+│   │   ├── cn.ts                    # Tailwind クラス結合
+│   │   ├── format.ts                # 数値・日付フォーマット
+│   │   ├── pagination.ts            # ページネーション計算ロジック
+│   │   └── result.ts                # Result 型（関数型エラーハンドリング）
+│   ├── validators/                  # 入力値検証・正規化
+│   │   ├── index.ts                 # バレルエクスポート
+│   │   ├── query.ts                 # クエリ・ページ番号正規化
+│   │   ├── sort.ts                  # ソートパラメータ正規化
+│   │   └── path.ts                  # パス検証（オープンリダイレクト防止）
 │   ├── constants.ts                 # 定数（言語カラー、API設定、UI定数）
-│   ├── env.ts                       # 環境変数バリデーション
-│   ├── locale.ts                    # ロケール設定・ユーティリティ
-│   ├── messages.ts                  # 多言語メッセージ定義
-│   ├── pagination.ts                # ページネーション計算ロジック
-│   ├── result.ts                    # Result 型（関数型エラーハンドリング）
-│   ├── utils.ts                     # ユーティリティ関数
-│   └── validators.ts                # 入力値正規化（query, page, sort）
+│   └── env.ts                       # 環境変数バリデーション
 ├── middleware.ts                     # レート制限ミドルウェア
 └── test/
     ├── setup.tsx                    # テストセットアップ
@@ -190,7 +216,7 @@ Next.js 15 の App Router を活用し、データフェッチが必要なコン
 - **Edge Runtime**: 検索ページとリポジトリ詳細ページで Edge Runtime を使用し、コールドスタートを高速化
 - **Suspense**: React Suspense による段階的レンダリングで初期表示を高速化 (`src/app/search/page.tsx`)
 - **React.memo**: 頻繁に再レンダリングされるコンポーネントをメモ化 (`RepositoryCard`, `StatDisplay`)
-- **Intl.DateTimeFormat キャッシュ**: 日付フォーマッターをキャッシュして再利用 (`src/lib/utils.ts`)
+- **Intl.DateTimeFormat キャッシュ**: 日付フォーマッターをキャッシュして再利用 (`src/lib/utils/format.ts`)
 - **指数バックオフリトライ**: API エラー時の自動リトライで信頼性向上 (`src/lib/api/github-client.ts`)
 - **環境変数キャッシュ**: 本番環境で環境変数パース結果をキャッシュ (`src/lib/env.ts`)
 
