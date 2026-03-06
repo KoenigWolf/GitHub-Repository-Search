@@ -268,7 +268,7 @@ vitest-axe を使用し、コンポーネント単位で WCAG 違反を自動検
 
 ## ディレクトリ構成
 
-```
+```text
 src/
 ├── app/                    # ページ（Server Components）
 ├── components/
